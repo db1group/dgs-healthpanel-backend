@@ -8,6 +8,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddMapster();
 builder.Services.AddDomainServices();
+builder.Services.AddAzureAdAuth(builder.Configuration);
 
 var app = builder.Build();
 
@@ -18,9 +19,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
