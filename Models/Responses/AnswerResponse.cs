@@ -7,9 +7,9 @@ namespace Db1HealthPanelBack.Models.Responses
     {
         public async Task ExecuteResultAsync(ActionContext context)
         {
-            context.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
+            var result = new ObjectResult(null){ StatusCode = StatusCodes.Status201Created };
 
-            await ExecuteResultAsync(context);
+            await result.ExecuteResultAsync(context);
         }
     }
 }

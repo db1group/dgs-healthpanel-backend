@@ -6,16 +6,19 @@ namespace Db1HealthPanelBack.Models.Responses.Errors
     {
         public ErrorResponse(string message)
         {
-            ErrorMesssage = message;
+            ErrorMessage = message;
         }
         
-        public string? ErrorMesssage { get; set; }
+        public string? ErrorMessage { get; set; }
 
         public async Task ExecuteResultAsync(ActionContext context)
         {
-            context.HttpContext.Response.StatusCode = 422;
+            var objectResult = new ObjectResult(this)
+            {
+                StatusCode = StatusCodes.Status422UnprocessableEntity
+            };
 
-            await ExecuteResultAsync(context);
+            await objectResult.ExecuteResultAsync(context);
         }
     }
 }

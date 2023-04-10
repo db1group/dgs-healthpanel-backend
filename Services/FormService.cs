@@ -55,20 +55,20 @@ namespace Db1HealthPanelBack.Services
             
             var answersRequestedIds = request.Questions?.Select(q => q.QuestionId);
 
-            if(answersRequestedIds is null) return new ErrorResponse(ErrorMessage.ProjectNotFound); 
+            if(answersRequestedIds is null) return new ErrorResponse(ErrorMessage.QuestionNeeded); 
 
-                var anwsersFetched = await _contextConfig.Answers.Where(p 
+                var answersFetched = await _contextConfig.Answers.Where(p 
                     => answersRequestedIds.Contains(p.QuestionId)).ToListAsync();
 
-            anwsersFetched.ForEach(p => 
+            answersFetched.ForEach(p => 
             {
-                var anwser = request?.Questions?.FirstOrDefault(e => e.QuestionId == p.QuestionId);
+                var answer = request?.Questions?.FirstOrDefault(e => e.QuestionId == p.QuestionId);
                 
-                if (anwser is not null)
-                    p.Value = anwser.Value == "DONE" ? true : false;
+                if (answer is not null)
+                    p.Value = answer.Value == "DONE" ? true : false;
             });
 
-            var newAnwsers = request.Questions?.Where(p
+            var newAnswers = request.Questions?.Where(p
                 => !answersRequestedIds.Contains(p.QuestionId))
                 .Select(p => new Answer
                 {
@@ -76,10 +76,10 @@ namespace Db1HealthPanelBack.Services
                     Value = p.Value == "DONE" ? true : false
                 });
 
-            _contextConfig.UpdateRange(anwsersFetched);
+            _contextConfig.UpdateRange(answersFetched);
 
-            if(newAnwsers is not null)
-                await _contextConfig.AddRangeAsync(newAnwsers);
+            if(newAnswers is not null)
+                await _contextConfig.AddRangeAsync(newAnswers);
                 
             await _contextConfig.SaveChangesAsync();
 
