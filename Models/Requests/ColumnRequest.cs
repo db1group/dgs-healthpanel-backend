@@ -8,7 +8,7 @@ namespace Db1HealthPanelBack.Models.Requests
         public string? Title { get; set; }
         
         [Required]
-        public int Weight { get; set; }
+        public decimal? Weight { get; set; }
 
         [Required]
         public ICollection<QuestionRequest>? Questions { get; set; }

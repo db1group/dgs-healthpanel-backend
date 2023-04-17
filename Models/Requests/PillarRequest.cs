@@ -6,7 +6,7 @@ namespace Db1HealthPanelBack.Models.Requests
     {
         [Required]
         public string? Title { get; set; }
-        
+
         [Required]
         public string? BackgroundColor { get; set; }
 
@@ -15,5 +15,8 @@ namespace Db1HealthPanelBack.Models.Requests
 
         [Required]
         public int? Order { get; set; }
+
+        [Required]
+        public decimal? Weight { get; set; }
     }
 }
