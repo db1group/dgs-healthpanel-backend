@@ -7,5 +7,6 @@ namespace Db1HealthPanelBack.Entities
         public string? Title { get; set; }
         public int Weight { get; set; }
         public ICollection<Question>? Questions { get; set; }
+        public int? Order { get; set; }
     }
 }
