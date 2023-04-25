@@ -8,12 +8,9 @@ namespace Db1HealthPanelBack.Infra.EntityMaps
     {
         public void Configure(EntityTypeBuilder<Lead> builder)
         {
-            builder.HasKey(property => new
-            {
-                property.ProjectId
-            ,
-                property.Name
-            });
+            builder.HasKey(property => property.Id);
+            builder.Property(property => property.Id)
+                .ValueGeneratedOnAdd();
         }
     }
 }

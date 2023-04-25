@@ -7,6 +7,7 @@ namespace Db1HealthPanelBack.Configs
         public static void AddDomainServices(this IServiceCollection services)
         {
             services.AddTransient<FormService>();
+            services.AddTransient<LeadService>();
         }
     }
 }

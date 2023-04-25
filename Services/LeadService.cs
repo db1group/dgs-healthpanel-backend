@@ -22,18 +22,28 @@ namespace Db1HealthPanelBack.Services
 
         public async Task<LeadResponse> CreateLeadEngineer(LeadRequest leadRequest)
         {
+            Console.WriteLine(leadRequest);
             var lead = leadRequest.Adapt<Lead>();
+
             var projectName = _contextConfig.Projects.FirstOrDefault(p => p.Id == leadRequest.ProjectId);
 
             if (lead is not null && projectName is not null)
             {
-                await _contextConfig.Leads.AddAsync(lead);
+
+                var leadProject = new LeadProject
+                {
+                    Lead = lead,
+                    ProjectId = leadRequest.ProjectId
+                };
+
+                await _contextConfig.LeadProject.AddAsync(leadProject);
                 await _contextConfig.SaveChangesAsync();
+
+                return new LeadResponse(lead.Name, projectName.Name, lead.InTraining)
+                    .Adapt<LeadResponse>();
             }
 
-            return new LeadResponse { Name = lead.Name, ProjectName = projectName.Name };
-
-
+            throw new Exception("Lead or Project not found");
         }
 
 

@@ -12,6 +12,7 @@ namespace Db1HealthPanelBack.Configs
         public DbSet<Project> Projects { get; set; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<Lead> Leads { get; set; }
+        public DbSet<LeadProject> LeadProject { get; set; }
 
         public ContextConfig(DbContextOptions options) : base(options)
         {
@@ -25,6 +26,7 @@ namespace Db1HealthPanelBack.Configs
             modelBuilder.ApplyConfiguration(new ProjectMap());
             modelBuilder.ApplyConfiguration(new AnswerMap());
             modelBuilder.ApplyConfiguration(new LeadMap());
+            modelBuilder.ApplyConfiguration(new LeadProjectMap());
         }
     }
 }
