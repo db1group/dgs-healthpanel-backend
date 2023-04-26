@@ -4,13 +4,16 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Db1HealthPanelBack.Infra.EntityMaps
 {
-    public class AnswerMap : IEntityTypeConfiguration<Answer>
+    public class AnswerPillarMap : IEntityTypeConfiguration<AnswerPillar>
     {
-        public void Configure(EntityTypeBuilder<Answer> builder)
+        public void Configure(EntityTypeBuilder<AnswerPillar> builder)
         {
             builder.HasKey(property => property.Id);
             builder.Property(property => property.Id)
                 .ValueGeneratedOnAdd();
+
+            builder.HasOne(property => property.Pillar)
+                .WithMany();
         }
     }
 }

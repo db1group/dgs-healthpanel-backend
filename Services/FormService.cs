@@ -55,17 +55,21 @@ namespace Db1HealthPanelBack.Services
             
             var answersRequestedIds = request.Questions?.Select(q => q.QuestionId);
 
+            var actualMonth = DateTime.Now.ToString("MM");
+            var lastMonth = DateTime.Now.AddMonths(-1).ToString("MM");
+
             if(answersRequestedIds is null) return new ErrorResponse(ErrorMessage.QuestionNeeded); 
 
-                var answersFetched = await _contextConfig.Answers.Where(p 
-                    => answersRequestedIds.Contains(p.QuestionId)).ToListAsync();
+                var answersFetched = await _contextConfig.AnswersQuestions.Where(p 
+                    => !answersRequestedIds.Any(an => p.QuestionId == an) 
+                    && actualMonth == p.CreatedAt.ToString("MM") || lastMonth == p.CreatedAt.ToString("MM")).ToListAsync();
 
             answersFetched.ForEach(p => 
             {
                 var answer = request?.Questions?.FirstOrDefault(e => e.QuestionId == p.QuestionId);
                 
-                if (answer is not null)
-                    p.Value = answer.Value == "DONE" ? true : false;
+                // if (answer is not null)
+                //     p.Value = answer.Value == "DONE" ? true : false;
             });
 
             var newAnswers = request.Questions?.Where(p
