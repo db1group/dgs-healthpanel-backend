@@ -1,6 +1,6 @@
 namespace Db1HealthPanelBack.Entities
 {
-    public class LeadProject
+    public sealed class LeadProject
     {
         public Guid LeadId { get; set; }
         public Guid ProjectId { get; set; }

@@ -7,6 +7,8 @@ namespace Db1HealthPanelBack.Configs
     public class ContextConfig : DbContext
     {
         public DbSet<Answer> Answers { get; set; }
+        public DbSet<AnswerQuestion> AnswersQuestions { get; set; }
+        public DbSet<AnswerPillar> AnswerPillars { get; set; }
         public DbSet<Column> Column { get; set; }
         public DbSet<Pillar> Pillars { get; set; }
         public DbSet<Project> Projects { get; set; }
@@ -27,6 +29,8 @@ namespace Db1HealthPanelBack.Configs
             modelBuilder.ApplyConfiguration(new AnswerMap());
             modelBuilder.ApplyConfiguration(new LeadMap());
             modelBuilder.ApplyConfiguration(new LeadProjectMap());
+            modelBuilder.ApplyConfiguration(new AnswerPillarMap());
+            modelBuilder.ApplyConfiguration(new AnswerQuestionMap());
         }
     }
 }
