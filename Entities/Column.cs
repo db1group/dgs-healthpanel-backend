@@ -8,5 +8,6 @@ namespace Db1HealthPanelBack.Entities
         public decimal? Weight { get; set; }
         public ICollection<Question>? Questions { get; set; }
         public int? Order { get; set; }
+        public string? AdditionalData { get; set; }
     }
 }

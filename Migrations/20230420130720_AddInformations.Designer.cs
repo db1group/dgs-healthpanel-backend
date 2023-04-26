@@ -3,6 +3,7 @@ using System;
 using Db1HealthPanelBack.Configs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Db1HealthPanelBack.Migrations
 {
     [DbContext(typeof(ContextConfig))]
-    partial class ContextConfigModelSnapshot : ModelSnapshot
+    [Migration("20230420130720_AddInformations")]
+    partial class AddInformations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -70,35 +73,6 @@ namespace Db1HealthPanelBack.Migrations
                     b.HasIndex("PillarId");
 
                     b.ToTable("Column");
-                });
-
-            modelBuilder.Entity("Db1HealthPanelBack.Entities.Lead", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Leads");
-                });
-
-            modelBuilder.Entity("Db1HealthPanelBack.Entities.LeadProject", b =>
-                {
-                    b.Property<Guid>("LeadId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("LeadId", "ProjectId");
-
-                    b.HasIndex("ProjectId");
-
-                    b.ToTable("LeadProject");
                 });
 
             modelBuilder.Entity("Db1HealthPanelBack.Entities.Pillar", b =>
@@ -178,25 +152,6 @@ namespace Db1HealthPanelBack.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Db1HealthPanelBack.Entities.LeadProject", b =>
-                {
-                    b.HasOne("Db1HealthPanelBack.Entities.Lead", "Lead")
-                        .WithMany("LeadProjects")
-                        .HasForeignKey("LeadId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Db1HealthPanelBack.Entities.Project", "Project")
-                        .WithMany("LeadProjects")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Lead");
-
-                    b.Navigation("Project");
-                });
-
             modelBuilder.Entity("Db1HealthPanelBack.Entities.Question", b =>
                 {
                     b.HasOne("Db1HealthPanelBack.Entities.Column", null)
@@ -211,19 +166,9 @@ namespace Db1HealthPanelBack.Migrations
                     b.Navigation("Questions");
                 });
 
-            modelBuilder.Entity("Db1HealthPanelBack.Entities.Lead", b =>
-                {
-                    b.Navigation("LeadProjects");
-                });
-
             modelBuilder.Entity("Db1HealthPanelBack.Entities.Pillar", b =>
                 {
                     b.Navigation("Columns");
-                });
-
-            modelBuilder.Entity("Db1HealthPanelBack.Entities.Project", b =>
-                {
-                    b.Navigation("LeadProjects");
                 });
 #pragma warning restore 612, 618
         }
