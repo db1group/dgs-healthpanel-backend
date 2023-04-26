@@ -15,9 +15,11 @@ namespace Db1HealthPanelBack.Configs
         public DbSet<Question> Questions { get; set; }
         public DbSet<Lead> Leads { get; set; }
         public DbSet<LeadProject> LeadProject { get; set; }
+        public DbSet<Evaluation> Evaluations { get; set; }
 
         public ContextConfig(DbContextOptions options) : base(options)
         {
+            
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -29,6 +31,7 @@ namespace Db1HealthPanelBack.Configs
             modelBuilder.ApplyConfiguration(new AnswerMap());
             modelBuilder.ApplyConfiguration(new LeadMap());
             modelBuilder.ApplyConfiguration(new LeadProjectMap());
+            modelBuilder.ApplyConfiguration(new EvaluationMap());
             modelBuilder.ApplyConfiguration(new AnswerPillarMap());
             modelBuilder.ApplyConfiguration(new AnswerQuestionMap());
         }
