@@ -6,7 +6,14 @@ namespace Db1HealthPanelBack.Models.Requests
     {
         [Required]
         public string? Project { get; set; }
+
+        [Required]
+        public bool? IsRetroactive { get; set; }
+
         [Required]
         public ICollection<AnswerQuestionRequest>? Questions { get; set; }
+
+        [Required]
+        public ICollection<AnswerPillarRequest>? Pillars { get; set; }
     }
 }
