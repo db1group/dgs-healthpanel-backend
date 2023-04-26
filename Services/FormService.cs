@@ -60,8 +60,8 @@ namespace Db1HealthPanelBack.Services
 
             if(answersRequestedIds is null) return new ErrorResponse(ErrorMessage.QuestionNeeded); 
 
-                var answersFetched = await _contextConfig.AnswersQuestions.Where(p 
-                    => !answersRequestedIds.Any(an => p.QuestionId == an) 
+            var answersFetched = await _contextConfig.AnswersQuestions.Where(p 
+                => !answersRequestedIds.Any(an => p.QuestionId == an) 
                     && actualMonth == p.CreatedAt.ToString("MM") || lastMonth == p.CreatedAt.ToString("MM")).ToListAsync();
 
             answersFetched.ForEach(p => 

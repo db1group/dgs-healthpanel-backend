@@ -8,6 +8,7 @@ namespace Db1HealthPanelBack.Configs
         {
             services.AddTransient<FormService>();
             services.AddTransient<LeadService>();
+            services.AddTransient<ProjectService>();
         }
     }
 }

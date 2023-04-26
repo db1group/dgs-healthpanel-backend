@@ -1,12 +1,8 @@
 using Db1HealthPanelBack.Configs;
 using Db1HealthPanelBack.Entities;
-using Db1HealthPanelBack.Infra.Shared;
 using Db1HealthPanelBack.Models.Requests;
 using Db1HealthPanelBack.Models.Responses;
-using Db1HealthPanelBack.Models.Responses.Errors;
 using Mapster;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Db1HealthPanelBack.Services
 {
