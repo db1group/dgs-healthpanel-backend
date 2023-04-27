@@ -24,7 +24,7 @@ namespace Db1HealthPanelBack.Services
             var datesFilter = dates is null || !dates.Any() ? new List<DateTime>{ DateTime.Now } : dates.ToList();
 
             var result = await _contextConfig.Evaluations
-                .Where(x => projectIds.ToList().Contains(x.ProjectId) && datesFilter.Contains(x.Date))
+                .Where(x => projectIds.Contains(x.ProjectId) && datesFilter.Contains(x.Date))
                 .ToListAsync();
 
             return result.Adapt<List<EvaluationResponse>>();
