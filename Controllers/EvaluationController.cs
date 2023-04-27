@@ -1,4 +1,3 @@
-using Db1HealthPanelBack.Models.Requests;
 using Db1HealthPanelBack.Models.Responses;
 using Db1HealthPanelBack.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -17,9 +16,9 @@ namespace Db1HealthPanelBack.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<EvaluationResponse>> Get(IEnumerable<Guid> projectIds,IEnumerable<DateTime>? dates)
+        public async Task<IEnumerable<EvaluationResponse>> Get([FromQuery(Name = "projectIds[]")] IEnumerable<Guid> projectIds, DateTime? startDate, DateTime? endDate)
         {
-            return await _evaluationService.GetEvaluationsAsync(projectIds, dates);
+            return await _evaluationService.GetEvaluationsAsync(projectIds, startDate, endDate);
         }
     }
 }

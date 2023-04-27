@@ -1,11 +1,6 @@
 using Db1HealthPanelBack.Configs;
-using Db1HealthPanelBack.Entities;
-using Db1HealthPanelBack.Infra.Shared;
-using Db1HealthPanelBack.Models.Requests;
 using Db1HealthPanelBack.Models.Responses;
-using Db1HealthPanelBack.Models.Responses.Errors;
 using Mapster;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Db1HealthPanelBack.Services
@@ -19,15 +14,22 @@ namespace Db1HealthPanelBack.Services
             _contextConfig = contextConfig;
         }
 
-        public async Task<IEnumerable<EvaluationResponse>> GetEvaluationsAsync(IEnumerable<Guid> projectIds, IEnumerable<DateTime>? dates)
+
+        public async Task<IEnumerable<EvaluationResponse>> GetEvaluationsAsync(IEnumerable<Guid> projectIds, DateTime? startDate, DateTime? endDate)
         {
-            var datesFilter = dates is null || !dates.Any() ? new List<DateTime>{ DateTime.Now } : dates.ToList();
+            var startDateFilter = startDate ?? new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
 
-            var result = await _contextConfig.Evaluations
-                .Where(x => projectIds.Contains(x.ProjectId) && datesFilter.Contains(x.Date))
-                .ToListAsync();
+            var query = _contextConfig.Evaluations
+                .Where(x => projectIds.ToList().Contains(x.ProjectId) &&
+                        x.Date >= startDateFilter);
 
-            return result.Adapt<List<EvaluationResponse>>();
+            if (endDate is not null) {
+                query = query.Where(x => x.Date <= endDate);
+            }
+
+            var result = await query.ToListAsync();
+
+            return result.Adapt<IEnumerable<EvaluationResponse>>();
         }
     }
 }

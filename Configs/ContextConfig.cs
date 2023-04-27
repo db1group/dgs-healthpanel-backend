@@ -19,7 +19,7 @@ namespace Db1HealthPanelBack.Configs
 
         public ContextConfig(DbContextOptions options) : base(options)
         {
-            
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
