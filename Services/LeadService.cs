@@ -26,14 +26,33 @@ namespace Db1HealthPanelBack.Services
         }
         public async Task<IActionResult> FindLead(Guid id)
         {
-            var lead = await _contextConfig.Leads.FirstOrDefaultAsync(property => property.Id == id);
+            var lead = await _contextConfig.Leads
+            .Include(property => property.LeadProjects)
+            .FirstOrDefaultAsync(property => property.Id == id);
+
 
             if (lead is null) return new ErrorResponse("Lead Not Found");
 
             return lead.Adapt<LeadResponse>();
         }
 
+        public async Task<IActionResult> UpdateLead(Guid id, LeadRequest lead)
+        {
+            var leadResult = await _contextConfig.Leads.FirstOrDefaultAsync(property => property.Id == id);
 
+            if (leadResult is null) return new ErrorResponse("Lead Not Found");
+
+            leadResult.Name = lead.Name;
+            leadResult.InTraining = lead.InTraining;
+
+            if (lead.LeadProjects is not null)
+                leadResult.LeadProjects = lead.LeadProjects.Adapt<List<LeadProject>>();
+
+            _contextConfig.Leads.Update(leadResult);
+            await _contextConfig.SaveChangesAsync();
+
+            return leadResult.Adapt<LeadResponse>();
+        }
 
         public async Task<IActionResult> DeleteLead(Guid id)
         {

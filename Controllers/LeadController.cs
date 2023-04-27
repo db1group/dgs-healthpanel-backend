@@ -25,6 +25,9 @@ namespace Db1HealthPanelBack.Controllers
             => await _leadService.FindLead(id);
 
 
+        [HttpPut("{id:Guid}")]
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] LeadRequest lead)
+            => await _leadService.UpdateLead(id, lead);
 
         [HttpDelete("{id:Guid}")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
