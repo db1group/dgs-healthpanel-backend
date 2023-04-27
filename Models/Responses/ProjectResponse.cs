@@ -4,12 +4,7 @@ namespace Db1HealthPanelBack.Models.Responses
 {
     public class ProjectResponse : IActionResult
     {
-        public ProjectResponse(int statusCode = 200)
-        {
-            StatusCode = statusCode;
-        }
-
-        private int StatusCode { get; set; }
+        private int StatusCode { get; set; } = 200;
         public Guid Id { get; set; }
         public string? Name { get; set; }
 
@@ -18,7 +13,7 @@ namespace Db1HealthPanelBack.Models.Responses
 
         public async Task ExecuteResultAsync(ActionContext context)
         {
-            var result = new ObjectResult(this) { StatusCode = StatusCode};
+            var result = new ObjectResult(this) { StatusCode = StatusCode };
 
             await result.ExecuteResultAsync(context);
         }

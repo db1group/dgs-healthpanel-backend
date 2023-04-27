@@ -8,7 +8,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddMapster();
 builder.Services.AddDomainServices();
-builder.Services.AddAzureAdAuth(builder.Configuration);
+// builder.Services.AddAzureAdAuth(builder.Configuration);
 
 var app = builder.Build();
 
