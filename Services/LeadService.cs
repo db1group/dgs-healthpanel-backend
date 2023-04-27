@@ -2,7 +2,10 @@ using Db1HealthPanelBack.Configs;
 using Db1HealthPanelBack.Entities;
 using Db1HealthPanelBack.Models.Requests;
 using Db1HealthPanelBack.Models.Responses;
+using Db1HealthPanelBack.Models.Responses.Errors;
 using Mapster;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Db1HealthPanelBack.Services
 {
@@ -15,33 +18,47 @@ namespace Db1HealthPanelBack.Services
             _contextConfig = contextConfig;
         }
 
-
-        public async Task<LeadResponse> CreateLeadEngineer(LeadRequest leadRequest)
+        public async Task<IEnumerable<LeadResponse>> GetAllLeads()
         {
-            Console.WriteLine(leadRequest);
-            var lead = leadRequest.Adapt<Lead>();
+            var leads = await _contextConfig.Leads.ToListAsync();
 
-            var projectName = _contextConfig.Projects.FirstOrDefault(p => p.Id == leadRequest.ProjectId);
+            return leads.Adapt<List<LeadResponse>>();
+        }
+        public async Task<IActionResult> FindLead(Guid id)
+        {
+            var lead = await _contextConfig.Leads.FirstOrDefaultAsync(property => property.Id == id);
 
-            if (lead is not null && projectName is not null)
-            {
+            if (lead is null) return new ErrorResponse("Lead Not Found");
 
-                var leadProject = new LeadProject
-                {
-                    Lead = lead,
-                    ProjectId = leadRequest.ProjectId
-                };
-
-                await _contextConfig.LeadProject.AddAsync(leadProject);
-                await _contextConfig.SaveChangesAsync();
-
-                return new LeadResponse(lead.Name, projectName.Name, lead.InTraining)
-                    .Adapt<LeadResponse>();
-            }
-
-            throw new Exception("Lead or Project not found");
+            return lead.Adapt<LeadResponse>();
         }
 
 
+
+        public async Task<IActionResult> DeleteLead(Guid id)
+        {
+            var lead = await _contextConfig.Leads.FirstOrDefaultAsync(property => property.Id == id);
+
+            if (lead is null) return new ErrorResponse("Lead Not Found");
+
+            _contextConfig.Remove(lead);
+            await _contextConfig.SaveChangesAsync();
+
+            return new ObjectResult(null) { StatusCode = 204 };
+        }
+
+        public async Task<IActionResult> CreateLead(LeadRequest lead)
+        {
+            var leadEntity = lead.Adapt<Lead>();
+
+            await _contextConfig.AddAsync(leadEntity);
+            await _contextConfig.SaveChangesAsync();
+
+            var result = leadEntity.Adapt<LeadResponse>();
+
+            result.SetStatusCode(201);
+
+            return result;
+        }
     }
 }

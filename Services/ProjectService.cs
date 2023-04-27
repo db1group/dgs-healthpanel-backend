@@ -18,11 +18,17 @@ namespace Db1HealthPanelBack.Services
             _contextConfig = contextConfig;
         }
 
+        public async Task<IEnumerable<ProjectResponse>> GetAllProjects()
+        {
+            var projects = await _contextConfig.Projects.ToListAsync();
+
+            return projects.Adapt<List<ProjectResponse>>();
+        }
         public async Task<IActionResult> FindProject(Guid id)
         {
             var project = await _contextConfig.Projects.FirstOrDefaultAsync(property => property.Id == id);
 
-            if (project is null) return new ErrorResponse("Project Not Found"); 
+            if (project is null) return new ErrorResponse("Project Not Found");
 
             return project.Adapt<ProjectResponse>();
         }
@@ -32,7 +38,7 @@ namespace Db1HealthPanelBack.Services
             var projectResult = await _contextConfig.Projects.FirstOrDefaultAsync(property => property.Id == id);
 
             if (projectResult is null) return new ErrorResponse("Project Not Found");
-            
+
             projectResult.Name = project.Name;
 
             _contextConfig.Update(projectResult);
@@ -46,7 +52,7 @@ namespace Db1HealthPanelBack.Services
             var project = await _contextConfig.Projects.FirstOrDefaultAsync(property => property.Id == id);
 
             if (project is null) return new ErrorResponse("Project Not Found");
-            
+
             _contextConfig.Remove(project);
             await _contextConfig.SaveChangesAsync();
 
