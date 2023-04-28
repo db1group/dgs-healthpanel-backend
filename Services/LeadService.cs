@@ -38,7 +38,8 @@ namespace Db1HealthPanelBack.Services
 
         public async Task<IActionResult> UpdateLead(Guid id, LeadRequest lead)
         {
-            var leadResult = await _contextConfig.Leads.FirstOrDefaultAsync(property => property.Id == id);
+            var leadResult = await _contextConfig.Leads.Include(lead => lead.LeadProjects)
+                                                        .FirstOrDefaultAsync(property => property.Id == id);
 
             if (leadResult is null) return new ErrorResponse("Lead Not Found");
 
@@ -46,7 +47,17 @@ namespace Db1HealthPanelBack.Services
             leadResult.InTraining = lead.InTraining;
 
             if (lead.LeadProjects is not null)
-                leadResult.LeadProjects = lead.LeadProjects.Adapt<List<LeadProject>>();
+            {
+                leadResult.LeadProjects = leadResult.LeadProjects?
+                                        .Where(ld => lead.LeadProjects!.Any(lds => lds.ProjectId == ld.ProjectId))
+                                        .ToList();
+
+                var projectsToAdd = lead.LeadProjects!
+                                        .Where(ld => !leadResult.LeadProjects!.Any(lds => lds.ProjectId == ld.ProjectId))
+                                                    .Adapt<List<LeadProject>>();
+                                                    
+                projectsToAdd.ForEach(pta => leadResult.LeadProjects!.Add(pta));
+            } else leadResult.LeadProjects = new List<LeadProject>();
 
             _contextConfig.Leads.Update(leadResult);
             await _contextConfig.SaveChangesAsync();
