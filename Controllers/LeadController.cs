@@ -16,8 +16,8 @@ namespace Db1HealthPanelBack.Controllers
             _leadService = leadService;
         }
 
-        [HttpGet("")]
-        public async Task<IEnumerable<LeadResponse>> GetAllLeads()
+        [HttpGet]
+        public async Task<IEnumerable<LeadResponse>> GetAll()
             => await _leadService.GetAllLeads();
 
         [HttpGet("{id:Guid}")]
