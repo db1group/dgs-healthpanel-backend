@@ -93,7 +93,7 @@ namespace Db1HealthPanelBack.Services
 
             var answerFetched = await _contextConfig.Answers
                                     .FetchWithQuestionAndPillars()
-                                    .FetchWithMonthRange()
+                                    .FetchWithMonthRange(request.IsRetroactive)
                                     .FirstOrDefaultAsync();
 
             if (answerFetched is not null)
