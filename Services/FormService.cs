@@ -24,7 +24,8 @@ namespace Db1HealthPanelBack.Services
         public async Task<FormResponse> GetForm()
         {
             var result = await _contextConfig.Pillars
-                .Include("Columns.Questions").ToListAsync();
+                .Include(prop => prop.Columns!)
+                .ThenInclude(p => p.Questions).ToListAsync();
 
             var answerFetched = await _contextConfig.Answers
                                     .FetchWithQuestionAndPillars()
