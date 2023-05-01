@@ -1,4 +1,3 @@
-using System.Net;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Db1HealthPanelBack.Models.Responses
@@ -7,7 +6,7 @@ namespace Db1HealthPanelBack.Models.Responses
     {
         public async Task ExecuteResultAsync(ActionContext context)
         {
-            var result = new ObjectResult(null){ StatusCode = StatusCodes.Status201Created };
+            var result = new ObjectResult(this);
 
             await result.ExecuteResultAsync(context);
         }

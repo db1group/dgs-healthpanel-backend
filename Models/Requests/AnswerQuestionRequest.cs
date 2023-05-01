@@ -6,6 +6,7 @@ namespace Db1HealthPanelBack.Models.Requests
     {
         [Required]
         public Guid? QuestionId { get; set; }
+        
         [Required]
         public string? Value { get; set; }
     }

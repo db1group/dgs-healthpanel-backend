@@ -5,7 +5,7 @@ namespace Db1HealthPanelBack.Models.Requests
     public class AnswerRequest
     {
         [Required]
-        public string? Project { get; set; }
+        public Guid Project { get; set; }
 
         [Required]
         public bool? IsRetroactive { get; set; }
