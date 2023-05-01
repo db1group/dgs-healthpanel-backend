@@ -6,7 +6,6 @@ namespace Db1HealthPanelBack.Models.Requests
     {
         [Required]
         public Guid? PillarId { get; set; }
-        
         public string? AdditionalData { get; set; }
     }
 }
