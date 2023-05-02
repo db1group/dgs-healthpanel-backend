@@ -1,5 +1,4 @@
 using Db1HealthPanelBack.Configs;
-using Microsoft.AspNetCore.ResponseCompression;
 
 var builder = WebApplication.CreateBuilder(args);
 

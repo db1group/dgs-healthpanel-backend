@@ -23,9 +23,8 @@ namespace Db1HealthPanelBack.Services
                             .Where(x => projectIds.ToList().Contains(x.ProjectId) &&
                                     x.Date >= startDateFilter);
 
-            if (endDate is not null) {
+            if (endDate is not null)
                 query = query.Where(x => x.Date <= endDate);
-            }
 
             var result = await query.ToListAsync();
 
