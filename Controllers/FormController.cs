@@ -17,15 +17,15 @@ namespace Db1HealthPanelBack.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<FormResponse>> Get()
+        public async Task<IActionResult> Get([FromQuery(Name = "project")] Guid id)
         {
-            var response = await _formService.GetForm();
+            var response = await _formService.GetForm(id);
 
             return response;
         }
 
         [HttpPost]
-        public async Task<ActionResult<FormResponse>> CreateForm([FromBody] FormRequest form)
+        public async Task<IActionResult> CreateForm([FromBody] FormRequest form)
             => await _formService.CreateForm(form);
     }
 }

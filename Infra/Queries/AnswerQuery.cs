@@ -17,5 +17,8 @@ namespace Db1HealthPanelBack.Infra.Queries
 
             return answer.Where(p => actualMonth == p.CreatedAt.Month || lastMonth == p.CreatedAt.Month);
         }
+
+        public static IQueryable<Answer> WithProject(this IQueryable<Answer> answer, Guid id)
+            => answer.Where(prop => prop.ProjectId == id);
     }
 }

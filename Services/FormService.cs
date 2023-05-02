@@ -21,13 +21,20 @@ namespace Db1HealthPanelBack.Services
             _contextConfig = contextConfig;
         }
 
-        public async Task<FormResponse> GetForm()
+        public async Task<IActionResult> GetForm(Guid id)
         {
+            var project = await _contextConfig.Projects
+                            .FirstOrDefaultAsync(prop => prop.Id == id);
+
+            if(project is null) return new ErrorResponse("Project Not Found");
+
             var result = await _contextConfig.Pillars
-                .Include(prop => prop.Columns!)
-                .ThenInclude(p => p.Questions).ToListAsync();
+                            .Include(prop => prop.Columns!)
+                            .ThenInclude(p => p.Questions)
+                            .ToListAsync();
 
             var answerFetched = await _contextConfig.Answers
+                                    .WithProject(id)
                                     .FetchWithQuestionAndPillars()
                                     .FetchWithMonthRange()
                                     .FirstOrDefaultAsync();
@@ -66,7 +73,7 @@ namespace Db1HealthPanelBack.Services
             return formResponse;
         }
 
-        public async Task<FormResponse> CreateForm(FormRequest form)
+        public async Task<IActionResult> CreateForm(FormRequest form)
         {
             var pillars = form.Pillars?.Adapt<IEnumerable<Pillar>>();
 
@@ -93,6 +100,7 @@ namespace Db1HealthPanelBack.Services
             var answerPillarsIds = request.Pillars?.Select(p => p.PillarId);
 
             var answerFetched = await _contextConfig.Answers
+                                    .WithProject(project.Id)
                                     .FetchWithQuestionAndPillars()
                                     .FetchWithMonthRange(request.IsRetroactive)
                                     .FirstOrDefaultAsync();
