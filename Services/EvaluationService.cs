@@ -14,7 +14,6 @@ namespace Db1HealthPanelBack.Services
             _contextConfig = contextConfig;
         }
 
-
         public async Task<IEnumerable<EvaluationResponse>> GetEvaluationsAsync(IEnumerable<Guid> projectIds, DateTime? startDate, DateTime? endDate)
         {
             var startDateFilter = startDate ?? new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);

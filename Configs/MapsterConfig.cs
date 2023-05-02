@@ -11,7 +11,7 @@ namespace Db1HealthPanelBack.Configs
         {
             TypeAdapterConfig<QuestionRequest, Question>
                 .NewConfig()
-                .Map(target => target.Value, intent => intent.Value == "DONE" ? true : false);
+                .Map(target => target.Value, intent => intent.Value == "DONE");
 
             TypeAdapterConfig<Question, QuestionResponse>
                 .NewConfig()
