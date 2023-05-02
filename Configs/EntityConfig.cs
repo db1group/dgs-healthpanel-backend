@@ -9,6 +9,7 @@ namespace Db1HealthPanelBack.Configs
             services.AddDbContextFactory<ContextConfig>(options => 
             {
                 options.UseNpgsql(configurationManager.GetConnectionString("Database"));
+                AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
             });
         }   
     }

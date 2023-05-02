@@ -17,10 +17,7 @@ namespace Db1HealthPanelBack.Configs
         public DbSet<LeadProject> LeadProject { get; set; }
         public DbSet<Evaluation> Evaluations { get; set; }
 
-        public ContextConfig(DbContextOptions options) : base(options)
-        {
-            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-        }
+        public ContextConfig(DbContextOptions options) : base(options) {}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
