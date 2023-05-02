@@ -20,8 +20,8 @@ namespace Db1HealthPanelBack.Services
             var startDateFilter = startDate ?? new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
 
             var query = _contextConfig.Evaluations
-                .Where(x => projectIds.ToList().Contains(x.ProjectId) &&
-                        x.Date >= startDateFilter);
+                            .Where(x => projectIds.ToList().Contains(x.ProjectId) &&
+                                    x.Date >= startDateFilter);
 
             if (endDate is not null) {
                 query = query.Where(x => x.Date <= endDate);
