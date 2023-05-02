@@ -4,7 +4,6 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Db1HealthPanelBack</RootNamespace>
-    <UserSecretsId>a7fab3f2-ead5-4760-917d-46e896551ae5</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
