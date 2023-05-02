@@ -6,16 +6,16 @@ namespace Db1HealthPanelBack.Configs
 {
     public class ContextConfig : DbContext
     {
-        public DbSet<Answer> Answers { get; set; }
-        public DbSet<AnswerQuestion> AnswersQuestions { get; set; }
-        public DbSet<AnswerPillar> AnswerPillars { get; set; }
-        public DbSet<Column> Column { get; set; }
-        public DbSet<Pillar> Pillars { get; set; }
-        public DbSet<Project> Projects { get; set; }
-        public DbSet<Question> Questions { get; set; }
-        public DbSet<Lead> Leads { get; set; }
-        public DbSet<LeadProject> LeadProject { get; set; }
-        public DbSet<Evaluation> Evaluations { get; set; }
+        public required DbSet<Answer> Answers { get; set; }
+        public required DbSet<AnswerQuestion> AnswersQuestions { get; set; }
+        public required DbSet<AnswerPillar> AnswerPillars { get; set; }
+        public required DbSet<Column> Column { get; set; }
+        public required DbSet<Pillar> Pillars { get; set; }
+        public required DbSet<Project> Projects { get; set; }
+        public required DbSet<Question> Questions { get; set; }
+        public required DbSet<Lead> Leads { get; set; }
+        public required DbSet<LeadProject> LeadProject { get; set; }
+        public required DbSet<Evaluation> Evaluations { get; set; }
 
         public ContextConfig(DbContextOptions options) : base(options) {}
 
