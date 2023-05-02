@@ -20,8 +20,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseAuthentication();
-app.UseAuthorization();
 app.UseCors(builder =>
 {
     builder.AllowAnyHeader();
@@ -33,6 +31,8 @@ app.UseResponseCompression();
 app.MapControllers();
 app.UsePathBase("/api");
 app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
 app.Run();
 
 

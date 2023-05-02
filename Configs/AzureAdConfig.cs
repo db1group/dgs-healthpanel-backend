@@ -8,13 +8,9 @@ namespace Db1HealthPanelBack.Configs
         public static void AddAzureAdAuth(this IServiceCollection services, ConfigurationManager configurationManager)
         {
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddMicrosoftIdentityWebApi(options => 
-                {
-                    configurationManager.Bind("AzureAd", options);
-
-                    options.TokenValidationParameters.NameClaimType = "name";
-                },
-                options => { configurationManager.Bind("AzureAd", options); });
+                .AddMicrosoftIdentityWebApi(configurationManager.GetSection("AzureAd"))
+                .EnableTokenAcquisitionToCallDownstreamApi()
+                .AddInMemoryTokenCaches();
         }
         
     }

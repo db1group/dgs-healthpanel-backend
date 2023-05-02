@@ -1,11 +1,12 @@
 using Db1HealthPanelBack.Models.Requests;
-using Db1HealthPanelBack.Models.Responses;
 using Db1HealthPanelBack.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Db1HealthPanelBack.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("[controller]")]
     public class FormController : ControllerBase
     {
