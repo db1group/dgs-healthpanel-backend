@@ -1,4 +1,5 @@
 using Db1HealthPanelBack.Services;
+using Microsoft.AspNetCore.ResponseCompression;
 
 namespace Db1HealthPanelBack.Configs
 {
@@ -11,5 +12,24 @@ namespace Db1HealthPanelBack.Configs
             services.AddTransient<EvaluationService>();
             services.AddTransient<ProjectService>();
         }
+
+        public static void AddCompressionToResponse(this IServiceCollection services)
+            => services.AddResponseCompression(options =>
+        {
+            options.EnableForHttps = true;
+            options.Providers.Add<BrotliCompressionProvider>();
+            options.Providers.Add<GzipCompressionProvider>();
+            options.MimeTypes = new[]
+            {
+                "text/plain",
+                "text/css",
+                "application/javascript",
+                "text/html",
+                "application/xml",
+                "text/xml",
+                "application/json",
+                "text/json"
+            };
+        });
     }
 }
