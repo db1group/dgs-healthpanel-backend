@@ -14,13 +14,15 @@ namespace Db1HealthPanelBack.Services
             _contextConfig = contextConfig;
         }
 
-        public async Task<IEnumerable<EvaluationResponse>> GetEvaluationsAsync(IEnumerable<Guid> projectIds, DateTime? startDate, DateTime? endDate)
+        public async Task<IEnumerable<EvaluationResponse>> GetEvaluationsAsync(IEnumerable<Guid>? projectIds, DateTime? startDate, DateTime? endDate)
         {
-            var startDateFilter = startDate ?? new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            var query = _contextConfig.Evaluations.AsQueryable();
 
-            var query = _contextConfig.Evaluations
-                            .Where(x => projectIds.ToList().Contains(x.ProjectId) &&
-                                    x.Date >= startDateFilter);
+            if(projectIds is not null && projectIds.Any())
+                query = query.Where(x => projectIds.ToList().Contains(x.ProjectId));
+
+            if (startDate is not null)
+                query = query.Where(x => x.Date >= startDate);
 
             if (endDate is not null)
                 query = query.Where(x => x.Date <= endDate);
