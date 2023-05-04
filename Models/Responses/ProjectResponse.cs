@@ -7,6 +7,8 @@ namespace Db1HealthPanelBack.Models.Responses
         private int StatusCode { get; set; } = 200;
         public Guid Id { get; set; }
         public string? Name { get; set; }
+        public ICollection<LeadProjectResponse>? LeadProjects { get; set; }
+        public string? CostCenter { get; set; }
 
         public void SetStatusCode(int statusCode)
             => StatusCode = statusCode;
