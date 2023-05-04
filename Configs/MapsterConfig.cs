@@ -16,6 +16,16 @@ namespace Db1HealthPanelBack.Configs
             TypeAdapterConfig<Question, QuestionResponse>
                 .NewConfig()
                 .Map(target => target.Value, intent => intent.Value ? "DONE" : "PENDING");
+
+            TypeAdapterConfig<ProjectResponse, Project>
+                .NewConfig()
+                .TwoWays()
+                .PreserveReference(true);
+
+            TypeAdapterConfig<LeadProjectResponse, LeadProject>
+                .NewConfig()
+                .TwoWays()
+                .PreserveReference(true);
         }
     }
 }

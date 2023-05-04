@@ -25,7 +25,7 @@ namespace Db1HealthPanelBack.Services
                             .ThenInclude(prop => prop.Lead)
                             .ToListAsync();
 
-            return projects.Adapt<List<ProjectResponse>>();
+            return projects.Adapt<ICollection<ProjectResponse>>();
         }
         public async Task<IActionResult> FindProject(Guid id)
         {
