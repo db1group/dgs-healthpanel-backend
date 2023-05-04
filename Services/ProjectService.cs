@@ -20,13 +20,19 @@ namespace Db1HealthPanelBack.Services
 
         public async Task<IEnumerable<ProjectResponse>> GetAllProjects()
         {
-            var projects = await _contextConfig.Projects.ToListAsync();
+            var projects = await _contextConfig.Projects
+                            .Include(prop => prop.LeadProjects!)
+                            .ThenInclude(prop => prop.Lead)
+                            .ToListAsync();
 
             return projects.Adapt<List<ProjectResponse>>();
         }
         public async Task<IActionResult> FindProject(Guid id)
         {
-            var project = await _contextConfig.Projects.FirstOrDefaultAsync(property => property.Id == id);
+            var project = await _contextConfig.Projects
+                            .Include(prop => prop.LeadProjects!)
+                            .ThenInclude(prop => prop.Lead)
+                            .FirstOrDefaultAsync(property => property.Id == id);
 
             if (project is null) return new ErrorResponse("Project Not Found");
 

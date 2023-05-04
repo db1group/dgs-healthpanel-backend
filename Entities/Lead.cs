@@ -5,6 +5,6 @@ namespace Db1HealthPanelBack.Entities
         public Guid Id { get; set; }
         public ICollection<LeadProject>? LeadProjects { get; set; }
         public string? Name { get; set; }
-        public Boolean? InTraining { get; set; }
+        public bool? InTraining { get; set; }
     }
 }
