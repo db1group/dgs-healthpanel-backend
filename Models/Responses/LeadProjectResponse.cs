@@ -5,6 +5,8 @@ namespace Db1HealthPanelBack.Models.Responses
     public class LeadProjectResponse : IActionResult
     {
         public Guid ProjectId { get; set; }
+        public Guid LeadId { get; set; }
+        public LeadResponse? Lead { get; set; }
 
         public async Task ExecuteResultAsync(ActionContext context)
         {
