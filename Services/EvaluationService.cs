@@ -16,7 +16,9 @@ namespace Db1HealthPanelBack.Services
 
         public async Task<IEnumerable<EvaluationResponse>> GetEvaluationsAsync(IEnumerable<Guid>? projectIds, DateTime? startDate, DateTime? endDate)
         {
-            var query = _contextConfig.Evaluations.AsQueryable();
+            var query = _contextConfig.Evaluations
+                .Include(p => p.Project)
+                .AsQueryable();
 
             if(projectIds is not null && projectIds.Any())
                 query = query.Where(x => projectIds.ToList().Contains(x.ProjectId));
