@@ -26,6 +26,10 @@ namespace Db1HealthPanelBack.Configs
                 .NewConfig()
                 .TwoWays()
                 .PreserveReference(true);
+
+            TypeAdapterConfig<Evaluation, EvaluationResponse>
+                .NewConfig()
+                .Map(target => target.ProjectName, intent => intent.Project.Name);
         }
     }
 }
