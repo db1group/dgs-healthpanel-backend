@@ -9,5 +9,6 @@ namespace Db1HealthPanelBack.Entities
         public ICollection<AnswerPillar>? Pillars { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
+        public DateTime AccrualMonth { get; set; } = DateTime.Now.AddMonths(-1);
     }
 }
