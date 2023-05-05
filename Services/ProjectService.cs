@@ -21,6 +21,7 @@ namespace Db1HealthPanelBack.Services
         public async Task<IEnumerable<ProjectResponse>> GetAllProjects()
         {
             var projects = await _contextConfig.Projects
+                            .Include(p => p.CostCenter)
                             .Include(prop => prop.LeadProjects!)
                             .ThenInclude(prop => prop.Lead)
                             .ToListAsync();
@@ -30,6 +31,7 @@ namespace Db1HealthPanelBack.Services
         public async Task<IActionResult> FindProject(Guid id)
         {
             var project = await _contextConfig.Projects
+                            .Include(p => p.CostCenter)
                             .Include(prop => prop.LeadProjects!)
                             .ThenInclude(prop => prop.Lead)
                             .FirstOrDefaultAsync(property => property.Id == id);

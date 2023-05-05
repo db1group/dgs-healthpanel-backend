@@ -9,6 +9,8 @@ namespace Db1HealthPanelBack.Infra.EntityMaps
         public void Configure(EntityTypeBuilder<Evaluation> builder)
         {
             builder.HasKey(property => property.Id);
+            builder.Property(property => property.Id)
+                .ValueGeneratedOnAdd();
 
             builder.HasOne(property => property.Project)
                 .WithMany(property => property.Evaluations);

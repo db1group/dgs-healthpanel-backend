@@ -17,10 +17,10 @@ namespace Db1HealthPanelBack.Configs
                 .NewConfig()
                 .Map(target => target.Value, intent => intent.Value ? "DONE" : "PENDING");
 
-            TypeAdapterConfig<ProjectResponse, Project>
+            TypeAdapterConfig<Project, ProjectResponse>
                 .NewConfig()
-                .TwoWays()
-                .PreserveReference(true);
+                .PreserveReference(true)
+                .Map(t => t.CostCenter, intent => intent.CostCenter != null ? intent.CostCenter.Name : "");
 
             TypeAdapterConfig<LeadProjectResponse, LeadProject>
                 .NewConfig()
@@ -29,7 +29,7 @@ namespace Db1HealthPanelBack.Configs
 
             TypeAdapterConfig<Evaluation, EvaluationResponse>
                 .NewConfig()
-                .Map(target => target.ProjectName, intent => intent.Project.Name);
+                .Map(target => target.ProjectName, intent => intent.Project != null ? intent.Project.Name : "");
         }
     }
 }

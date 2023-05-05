@@ -9,6 +9,7 @@ namespace Db1HealthPanelBack.Entities
         public uint? QuantityDevs { get; set; }
         public string? AdditionalData { get; set; }
         public Guid CostCenterId {get;set;}
+        public CostCenter? CostCenter {get;set;}
         public DateTime? CreatedAt { get; set; } = DateTime.Now;
     }
 }

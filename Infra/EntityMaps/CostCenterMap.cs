@@ -9,10 +9,8 @@ namespace Db1HealthPanelBack.Infra.EntityMaps
         public void Configure(EntityTypeBuilder<CostCenter> builder)
         {
             builder.HasKey(property => property.Id);
-
-            builder.HasMany(x => x.Projects)
-                .WithOne()
-                .HasForeignKey(property => property.CostCenterId);
+            builder.Property(property => property.Id)
+                .ValueGeneratedOnAdd();
         }
     }
 }
