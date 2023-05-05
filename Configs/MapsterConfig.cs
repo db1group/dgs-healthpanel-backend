@@ -29,7 +29,8 @@ namespace Db1HealthPanelBack.Configs
 
             TypeAdapterConfig<Evaluation, EvaluationResponse>
                 .NewConfig()
-                .Map(target => target.ProjectName, intent => intent.Project != null ? intent.Project.Name : "");
+                .Map(target => target.ProjectName, intent => intent.Project != null ? intent.Project.Name : "")
+                .Map(target => target.CostCenterName, intent => intent.Project.CostCenter != null ? intent.Project.CostCenter.Name : "");
         }
     }
 }
