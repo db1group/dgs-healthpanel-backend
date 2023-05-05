@@ -9,6 +9,6 @@ namespace Db1HealthPanelBack.Models.Responses
         public decimal ProcessHealthScore { get; set; }
         public decimal MetricsHealthScore { get; set; }
         public DateTime Date { get; set; }
-        public decimal HealthScore => (ProcessHealthScore + MetricsHealthScore / 2);
+        public decimal HealthScore => (ProcessHealthScore + MetricsHealthScore) / 2;
     }
 }

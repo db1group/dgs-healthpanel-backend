@@ -9,6 +9,6 @@ namespace Db1HealthPanelBack.Entities
         public decimal MetricsHealthScore { get; set; }
         public DateTime Date { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public decimal HealthScore => (ProcessHealthScore + MetricsHealthScore / 2);
+        public decimal HealthScore => (ProcessHealthScore + MetricsHealthScore) / 2;
     }
 }
