@@ -2,7 +2,6 @@ using Db1HealthPanelBack.Configs;
 using Db1HealthPanelBack.Entities;
 using Db1HealthPanelBack.Infra.Queries;
 using Db1HealthPanelBack.Infra.Shared;
-using Db1HealthPanelBack.Infra.Shared.Extension;
 using Db1HealthPanelBack.Models.Requests;
 using Db1HealthPanelBack.Models.Responses;
 using Db1HealthPanelBack.Models.Responses.Errors;
@@ -37,14 +36,14 @@ namespace Db1HealthPanelBack.Services
                                     .WithProject(id)
                                     .FetchWithQuestionAndPillars()
                                     .FetchWithMonthRange()
+                                    .OrderByDescending(prop => prop.CreatedAt)
                                     .FirstOrDefaultAsync();
 
-            var formResponse = new FormResponse
-            {
-                Pillars = result.Adapt<ICollection<PillarResponse>>()
-            };
+            var formResponse = new FormResponse { Pillars = result.Adapt<ICollection<PillarResponse>>() };
 
             if (answerFetched is not null)
+            {
+                formResponse.AccrualMonth = answerFetched.CreatedAt.AddMonths(-1);
                 formResponse.Pillars = formResponse.Pillars
                                             .Select(prop =>
                                             {
@@ -69,6 +68,7 @@ namespace Db1HealthPanelBack.Services
 
                                                 return prop;
                                             }).ToList();
+            }
 
             return formResponse;
         }
@@ -99,58 +99,22 @@ namespace Db1HealthPanelBack.Services
             var answersRequestedIds = request.Questions?.Select(q => q.QuestionId);
             var answerPillarsIds = request.Pillars?.Select(p => p.PillarId);
 
-            var answerFetched = await _contextConfig.Answers
-                                    .WithProject(project.Id)
-                                    .FetchWithQuestionAndPillars()
-                                    .FetchWithMonthRange(request.IsRetroactive)
-                                    .FirstOrDefaultAsync();
-
-            if (answerFetched is not null)
+            var newAnswers = new Answer
             {
-                answerFetched.UpdatedAt = DateTime.Now;
-                answerFetched.Pillars = request.Pillars!.Select(rp =>
-                    {
-                        var tempPillar = answerFetched.Pillars!.First(pp => pp.PillarId == rp.PillarId);
-
-                        tempPillar.AdditionalData = rp.AdditionalData;
-
-                        return tempPillar;
-                    }).ToList();
-
-                answerFetched.Questions = request.Questions!.Select(rq =>
-                    {
-                        var tempQuestion = answerFetched.Questions!.First(pp => pp.QuestionId == rq.QuestionId);
-
-                        tempQuestion.Value = rq.Value;
-
-                        return tempQuestion;
-                    }).ToList();
-
-                answerFetched?.Questions?.UpdateAllDates();
-                answerFetched?.Pillars?.UpdateAllDates();
-
-                _contextConfig.UpdateRange(answerFetched!);
-            }
-            else
-            {
-                var newAnswers = new Answer
+                ProjectId = project.Id,
+                Questions = answersRequestedIds?.Select(p => new AnswerQuestion
                 {
-                    ProjectId = project.Id,
-                    Questions = answersRequestedIds?.Select(p => new AnswerQuestion
-                    {
-                        QuestionId = p ?? Guid.NewGuid(),
-                        Value = request.Questions?.First(rp => rp.QuestionId == p).Value
-                    }).ToList(),
-                    Pillars = answerPillarsIds?.Select(p => new AnswerPillar
-                    {
-                        PillarId = p ?? Guid.NewGuid(),
-                        AdditionalData = request.Pillars?.First(rp => rp.PillarId == p).AdditionalData
-                    }).ToList()
-                };
+                    QuestionId = p ?? Guid.NewGuid(),
+                    Value = request.Questions?.First(rp => rp.QuestionId == p).Value
+                }).ToList(),
+                Pillars = answerPillarsIds?.Select(p => new AnswerPillar
+                {
+                    PillarId = p ?? Guid.NewGuid(),
+                    AdditionalData = request.Pillars?.First(rp => rp.PillarId == p).AdditionalData
+                }).ToList()
+            };
 
-                await _contextConfig.AddRangeAsync(newAnswers);
-            }
-
+            await _contextConfig.AddRangeAsync(newAnswers);
             await _contextConfig.SaveChangesAsync();
 
             return new AnswerResponse();

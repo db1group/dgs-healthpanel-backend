@@ -15,7 +15,7 @@ namespace Db1HealthPanelBack.Controllers
             _formService = formService;
         }
 
-        [HttpPut]
+        [HttpPost]
         public async Task<IActionResult> Submit([FromBody] AnswerRequest request)
             => await _formService.SubmitAnswer(request);
     }
