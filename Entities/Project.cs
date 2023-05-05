@@ -8,7 +8,7 @@ namespace Db1HealthPanelBack.Entities
         public ICollection<Evaluation>? Evaluations { get; set; }
         public uint? QuantityDevs { get; set; }
         public string? AdditionalData { get; set; }
-        public string? CostCenter { get; set; }
+        public Guid CostCenterId {get;set;}
         public DateTime? CreatedAt { get; set; } = DateTime.Now;
     }
 }

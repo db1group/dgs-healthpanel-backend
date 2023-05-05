@@ -3,6 +3,7 @@ using System;
 using Db1HealthPanelBack.Configs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Db1HealthPanelBack.Migrations
 {
     [DbContext(typeof(ContextConfig))]
-    partial class ContextConfigModelSnapshot : ModelSnapshot
+    [Migration("20230505181934_adding_costcenter")]
+    partial class adding_costcenter
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,9 +30,6 @@ namespace Db1HealthPanelBack.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
-
-                    b.Property<DateTime>("AccrualMonth")
-                        .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");
@@ -45,7 +45,7 @@ namespace Db1HealthPanelBack.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Answers", (string)null);
+                    b.ToTable("Answers");
                 });
 
             modelBuilder.Entity("Db1HealthPanelBack.Entities.AnswerPillar", b =>
@@ -75,7 +75,7 @@ namespace Db1HealthPanelBack.Migrations
 
                     b.HasIndex("PillarId");
 
-                    b.ToTable("AnswerPillars", (string)null);
+                    b.ToTable("AnswerPillars");
                 });
 
             modelBuilder.Entity("Db1HealthPanelBack.Entities.AnswerQuestion", b =>
@@ -105,7 +105,7 @@ namespace Db1HealthPanelBack.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("AnswersQuestions", (string)null);
+                    b.ToTable("AnswersQuestions");
                 });
 
             modelBuilder.Entity("Db1HealthPanelBack.Entities.Column", b =>
@@ -133,7 +133,7 @@ namespace Db1HealthPanelBack.Migrations
 
                     b.HasIndex("PillarId");
 
-                    b.ToTable("Column", (string)null);
+                    b.ToTable("Column");
                 });
 
             modelBuilder.Entity("Db1HealthPanelBack.Entities.CostCenter", b =>
@@ -151,7 +151,7 @@ namespace Db1HealthPanelBack.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CostCenters", (string)null);
+                    b.ToTable("CostCenters");
                 });
 
             modelBuilder.Entity("Db1HealthPanelBack.Entities.Evaluation", b =>
@@ -179,7 +179,7 @@ namespace Db1HealthPanelBack.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("Evaluations", (string)null);
+                    b.ToTable("Evaluations");
                 });
 
             modelBuilder.Entity("Db1HealthPanelBack.Entities.Lead", b =>
@@ -196,7 +196,7 @@ namespace Db1HealthPanelBack.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Leads", (string)null);
+                    b.ToTable("Leads");
                 });
 
             modelBuilder.Entity("Db1HealthPanelBack.Entities.LeadProject", b =>
@@ -211,7 +211,7 @@ namespace Db1HealthPanelBack.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("LeadProject", (string)null);
+                    b.ToTable("LeadProject");
                 });
 
             modelBuilder.Entity("Db1HealthPanelBack.Entities.Pillar", b =>
@@ -234,7 +234,7 @@ namespace Db1HealthPanelBack.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Pillars", (string)null);
+                    b.ToTable("Pillars");
                 });
 
             modelBuilder.Entity("Db1HealthPanelBack.Entities.Project", b =>
@@ -262,7 +262,7 @@ namespace Db1HealthPanelBack.Migrations
 
                     b.HasIndex("CostCenterId");
 
-                    b.ToTable("Projects", (string)null);
+                    b.ToTable("Projects");
                 });
 
             modelBuilder.Entity("Db1HealthPanelBack.Entities.Question", b =>
@@ -284,7 +284,7 @@ namespace Db1HealthPanelBack.Migrations
 
                     b.HasIndex("ColumnId");
 
-                    b.ToTable("Questions", (string)null);
+                    b.ToTable("Questions");
                 });
 
             modelBuilder.Entity("Db1HealthPanelBack.Entities.AnswerPillar", b =>

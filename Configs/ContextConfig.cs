@@ -16,6 +16,7 @@ namespace Db1HealthPanelBack.Configs
         public required DbSet<Lead> Leads { get; set; }
         public required DbSet<LeadProject> LeadProject { get; set; }
         public required DbSet<Evaluation> Evaluations { get; set; }
+        public required DbSet<CostCenter> CostCenters { get; set; }
 
         public ContextConfig(DbContextOptions options) : base(options) {}
 
@@ -31,6 +32,7 @@ namespace Db1HealthPanelBack.Configs
             modelBuilder.ApplyConfiguration(new EvaluationMap());
             modelBuilder.ApplyConfiguration(new AnswerPillarMap());
             modelBuilder.ApplyConfiguration(new AnswerQuestionMap());
+            modelBuilder.ApplyConfiguration(new CostCenterMap());
         }
     }
 }

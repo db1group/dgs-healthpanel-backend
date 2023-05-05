@@ -11,6 +11,7 @@ namespace Db1HealthPanelBack.Infra.EntityMaps
             builder.HasKey(property => property.Id);
             builder.Property(property => property.Id)
                 .ValueGeneratedOnAdd();
+
         }
     }
 }
