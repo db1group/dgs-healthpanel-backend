@@ -14,7 +14,7 @@ namespace Db1HealthPanelBack.Services
             _contextConfig = contextConfig;
         }
 
-        public async Task<IEnumerable<EvaluationResponse>> GetEvaluationsAsync(IEnumerable<Guid>? projectIds, DateTime? startDate, DateTime? endDate)
+        public async Task<IEnumerable<EvaluationResponse>> GetEvaluationsAsync(IEnumerable<Guid>? projectIds, IEnumerable<Guid>? costCenterIds, DateTime? startDate, DateTime? endDate)
         {
             var query = _contextConfig.Evaluations
                 .Include(p => p.Project)
@@ -23,6 +23,9 @@ namespace Db1HealthPanelBack.Services
 
             if(projectIds is not null && projectIds.Any())
                 query = query.Where(x => projectIds.ToList().Contains(x.ProjectId));
+
+            if(costCenterIds is not null && costCenterIds.Any())
+                query = query.Where(x => costCenterIds.ToList().Contains(x.Project.CostCenterId));                
 
             if (startDate is not null)
                 query = query.Where(x => x.Date >= startDate);
