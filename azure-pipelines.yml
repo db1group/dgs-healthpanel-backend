@@ -13,7 +13,7 @@ steps:
   
 - task: SSH@0
   inputs:
-    sshEndpoint: 'Prêmio EC2'
+    sshEndpoint: 'EC2 AWS'
     runOptions: 'commands'
     commands: 'cd db1-projects/health-panel-backend/;'
     readyTimeout: '20000'
