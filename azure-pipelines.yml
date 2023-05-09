@@ -18,7 +18,6 @@ steps:
     commands: 'cd db1-projects/health-panel-backend/;'
     readyTimeout: '20000'
     interactiveKeyboardAuthentication: true;'
-    readyTimeout: '20000'
 
 # Start with a minimal pipeline that you can customize to build and deploy your code.
 # Add steps that build, run tests, deploy, and more:
