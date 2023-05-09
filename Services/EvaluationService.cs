@@ -25,7 +25,7 @@ namespace Db1HealthPanelBack.Services
                 query = query.Where(x => projectIds.ToList().Contains(x.ProjectId));
 
             if(costCenterIds is not null && costCenterIds.Any())
-                query = query.Where(x => costCenterIds.ToList().Contains(x.Project.CostCenterId));                
+                query = query.Where(x => costCenterIds.ToList().Contains(x.Project!.CostCenterId));                
 
             if (startDate is not null)
                 query = query.Where(x => x.Date >= startDate);
