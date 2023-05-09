@@ -10,14 +10,13 @@ steps:
     echo Add other tasks to build, test, and deploy your project.
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
-  
+
 - task: SSH@0
   inputs:
     sshEndpoint: 'ec2-aws'
-    runOptions: 'commands'
-    commands: 'ls -la'
+    runOptions: 'inline'
+    inline: 'ls -la'
     readyTimeout: '20000'
-    interactiveKeyboardAuthentication: true;'
 
 # Start with a minimal pipeline that you can customize to build and deploy your code.
 # Add steps that build, run tests, deploy, and more:
