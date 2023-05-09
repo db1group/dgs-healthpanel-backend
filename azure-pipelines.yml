@@ -14,8 +14,6 @@ steps:
 - task: SSH@0
   inputs:
     sshEndpoint: 'ec2-aws'
-    runOptions: 'commands'
-    commands: 'cd db1-projects/health-panel-backend/;'
     readyTimeout: '20000'
     interactiveKeyboardAuthentication: true;'
 
