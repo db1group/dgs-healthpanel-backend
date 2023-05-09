@@ -24,6 +24,7 @@ namespace Db1HealthPanelBack.Services
                             .Include(p => p.CostCenter)
                             .Include(prop => prop.LeadProjects!)
                             .ThenInclude(prop => prop.Lead)
+                            .Include(prop => prop.CostCenter)
                             .ToListAsync();
 
             return projects.Adapt<ICollection<ProjectResponse>>();
@@ -34,6 +35,7 @@ namespace Db1HealthPanelBack.Services
                             .Include(p => p.CostCenter)
                             .Include(prop => prop.LeadProjects!)
                             .ThenInclude(prop => prop.Lead)
+                            .Include(prop => prop.CostCenter)
                             .FirstOrDefaultAsync(property => property.Id == id);
 
             if (project is null) return new ErrorResponse("Project Not Found");
@@ -43,11 +45,30 @@ namespace Db1HealthPanelBack.Services
 
         public async Task<IActionResult> ImproveProject(Guid id, ProjectRequest project)
         {
-            var projectResult = await _contextConfig.Projects.FirstOrDefaultAsync(property => property.Id == id);
+            var projectResult = await _contextConfig.Projects
+                                    .Include(prop => prop.LeadProjects)
+                                    .FirstOrDefaultAsync(property => property.Id == id);
 
             if (projectResult is null) return new ErrorResponse("Project Not Found");
 
+            var costCenter = await _contextConfig.CostCenters.FirstAsync(prop => prop.Id == project.CostCenter!.Id);
+
+            if(costCenter is null) return new ErrorResponse("Cost Center Not Found");
+
             projectResult.Name = project.Name;
+
+            if (project.LeadProjects is not null)
+            {
+                projectResult.LeadProjects = projectResult.LeadProjects?
+                                        .Where(ld => project.LeadProjects!.Any(lds => lds.ProjectId == ld.ProjectId))
+                                        .ToList();
+
+                var leadsToAdd = project.LeadProjects!
+                                        .Where(ld => !projectResult.LeadProjects!.Any(lds => lds.ProjectId == ld.ProjectId))
+                                                    .Adapt<List<LeadProject>>();
+                                                    
+                leadsToAdd.ForEach(pta => projectResult.LeadProjects!.Add(pta));
+            } else projectResult.LeadProjects = new List<LeadProject>();
 
             _contextConfig.Update(projectResult);
             await _contextConfig.SaveChangesAsync();
@@ -69,7 +90,12 @@ namespace Db1HealthPanelBack.Services
 
         public async Task<IActionResult> CreateProject(ProjectRequest project)
         {
+            var costCenter = await _contextConfig.CostCenters.FirstAsync(prop => prop.Id == project.CostCenter!.Id);
+
+            if(costCenter is null) return new ErrorResponse("Cost Center Not Found");
+            
             var projectEntity = project.Adapt<Project>();
+            projectEntity.CostCenter = costCenter;
 
             await _contextConfig.AddAsync(projectEntity);
             await _contextConfig.SaveChangesAsync();

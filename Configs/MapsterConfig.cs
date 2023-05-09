@@ -19,9 +19,8 @@ namespace Db1HealthPanelBack.Configs
 
             TypeAdapterConfig<Project, ProjectResponse>
                 .NewConfig()
-                .PreserveReference(true)
-                .Map(t => t.CostCenter, intent => intent.CostCenter != null ? intent.CostCenter.Name : "");
-
+                .PreserveReference(true);
+                
             TypeAdapterConfig<LeadProjectResponse, LeadProject>
                 .NewConfig()
                 .TwoWays()
@@ -30,8 +29,8 @@ namespace Db1HealthPanelBack.Configs
             TypeAdapterConfig<Evaluation, EvaluationResponse>
                 .NewConfig()
                 .Map(target => target.ProjectName, intent => intent.Project != null ? intent.Project.Name : "")
-                .Map(target => target.CostCenterName, intent => intent.Project.CostCenter != null ? intent.Project.CostCenter.Name : "")
-                .Map(target => target.CostCenterId, intent => intent.Project.CostCenter != null ? intent.Project.CostCenter.Id : Guid.Empty);
+                .Map(target => target.CostCenterName, intent => intent.Project!.CostCenter != null ? intent.Project.CostCenter.Name : "")
+                .Map(target => target.CostCenterId, intent => intent.Project!.CostCenter != null ? intent.Project.CostCenter.Id : Guid.Empty);
         }
     }
 }

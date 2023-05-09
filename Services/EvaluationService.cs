@@ -18,7 +18,7 @@ namespace Db1HealthPanelBack.Services
         {
             var query = _contextConfig.Evaluations
                 .Include(p => p.Project)
-                .ThenInclude(p => p.CostCenter)
+                .ThenInclude(p => p!.CostCenter)
                 .AsQueryable();
 
             if(projectIds is not null && projectIds.Any())
