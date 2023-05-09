@@ -14,8 +14,8 @@ steps:
 - task: SSH@0
   inputs:
     sshEndpoint: 'ec2-aws'
-    runOptions: 'commands'
-    commands: |
+    runOptions: 'inline'
+    inline: |
       cd db1-projects/health-panel-backend/;
       docker container stop HealthPanel;
       docker rm HealthPanel;
@@ -25,6 +25,8 @@ steps:
       docker run -d -t -i -e ASPNETCORE_ENVIRONMENT=Production -p 5000:5000 --name HealthPanel health-panel;
     interactiveSession: true
     readyTimeout: '20000'
+
+
 
 # Start with a minimal pipeline that you can customize to build and deploy your code.
 # Add steps that build, run tests, deploy, and more:
