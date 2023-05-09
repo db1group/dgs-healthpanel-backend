@@ -15,13 +15,14 @@ steps:
   inputs:
     sshEndpoint: 'ec2-aws'
     runOptions: 'commands'
-    commands: 'cd db1-projects/health-panel-backend/;\
-    docker container stop HealthPanel;\
-    docker rm HealthPanel;\
-    git pull origin main;\
-    docker rmi health-panel;\
-    docker build -t health-panel .;\
-    docker run -d -t -i -e ASPNETCORE_ENVIRONMENT=Production -p 5000:5000 --name HealthPanel health-panel;'
+    commands: |
+      cd db1-projects/health-panel-backend/;
+      docker container stop HealthPanel;
+      docker rm HealthPanel;
+      git pull origin main
+      docker rmi health-panel;
+      docker build -t health-panel .;
+      docker run -d -t -i -e ASPNETCORE_ENVIRONMENT=Production -p 5000:5000 --name HealthPanel health-panel;
     interactiveSession: true
     readyTimeout: '20000'
 
