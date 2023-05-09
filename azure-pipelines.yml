@@ -14,8 +14,9 @@ steps:
 - task: SSH@0
   inputs:
     sshEndpoint: 'ec2-aws'
-    runOptions: 'inline'
-    inline: 'ls -la'
+    runOptions: 'commands'
+    commands: 'ls -la'
+    interactiveSession: true
     readyTimeout: '20000'
 
 # Start with a minimal pipeline that you can customize to build and deploy your code.
