@@ -1,4 +1,5 @@
 using Db1HealthPanelBack.Configs;
+using Db1HealthPanelBack.Entities;
 using Db1HealthPanelBack.Models.Responses;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
@@ -37,5 +38,23 @@ namespace Db1HealthPanelBack.Services
 
             return result.Adapt<IEnumerable<EvaluationResponse>>();
         }
+
+        public async Task FeedEvaluation(Guid projectId, decimal processHealthScore)
+        {
+            var evaluation = await _contextConfig.Evaluations
+                                .FirstOrDefaultAsync(prop => prop.ProjectId == projectId && prop.Date.Month == DateTime.Now.Month);
+            
+            if(evaluation is not null)
+                evaluation.ProcessHealthScore = processHealthScore;
+            else evaluation = new Evaluation
+            {
+                Date = DateTime.Now,
+                ProcessHealthScore = processHealthScore,
+                ProjectId = projectId
+            };
+
+            _contextConfig.Evaluations.Update(evaluation);
+            await _contextConfig.SaveChangesAsync();
+        } 
     }
 }
