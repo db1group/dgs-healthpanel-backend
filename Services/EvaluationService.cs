@@ -42,7 +42,9 @@ namespace Db1HealthPanelBack.Services
         public async Task FeedEvaluation(Guid projectId, decimal processHealthScore)
         {
             var evaluation = await _contextConfig.Evaluations
-                                .FirstOrDefaultAsync(prop => prop.ProjectId == projectId && prop.Date.Month == DateTime.Now.Month);
+                                .FirstOrDefaultAsync(prop => prop.ProjectId == projectId 
+                                                        && prop.Date.Month == DateTime.Now.Month 
+                                                        && prop.Date.Year == prop.Date.Year);
             
             if(evaluation is not null)
                 evaluation.ProcessHealthScore = processHealthScore;
