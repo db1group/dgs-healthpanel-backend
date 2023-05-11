@@ -25,21 +25,28 @@ namespace Db1HealthPanelBack.Services
         public async Task<IActionResult> GetForm(Guid id)
         {
             var project = await _contextConfig.Projects
-                            .FirstOrDefaultAsync(prop => prop.Id == id);
+                                .FirstOrDefaultAsync(prop => prop.Id == id);
 
-            if(project is null) return new ErrorResponse("Project Not Found");
+            if (project is null)
+                return new ErrorResponse("Project Not Found");
 
-            var result = await _contextConfig.Pillars
-                            .Include(prop => prop.Columns!)
-                            .ThenInclude(p => p.Questions)
-                            .ToListAsync();
+            var pillarsQuery = _contextConfig.Pillars
+                                    .Include(prop => prop.Columns!)
+                                    .ThenInclude(p => p.Questions);
 
-            var answerFetched = await _contextConfig.Answers
-                                    .WithProject(id)
-                                    .FetchWithQuestionAndPillars()
-                                    .FetchWithMonthRange()
-                                    .OrderByDescending(prop => prop.CreatedAt)
-                                    .FirstOrDefaultAsync();
+            var resultTask = pillarsQuery.ToListAsync();
+
+            var answerFetchedTask = _contextConfig.Answers
+                                        .WithProject(id)
+                                        .FetchWithQuestionAndPillars()
+                                        .FetchWithMonthRange()
+                                        .OrderByDescending(prop => prop.CreatedAt)
+                                        .FirstOrDefaultAsync();
+
+            await Task.WhenAll(resultTask, answerFetchedTask);
+
+            var result = resultTask.Result;
+            var answerFetched = answerFetchedTask.Result;
 
             var formResponse = new FormResponse { Pillars = result.Adapt<ICollection<PillarResponse>>() };
 
@@ -63,7 +70,7 @@ namespace Db1HealthPanelBack.Services
                                                         pq.Value = questionFetched?.Value;
 
                                                         return pq;
-                                                    }).ToList();  
+                                                    }).ToList();
 
                                                     return pc;
                                                 }).ToList();
