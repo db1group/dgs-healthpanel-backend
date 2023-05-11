@@ -44,7 +44,7 @@ namespace Db1HealthPanelBack.Services
             var evaluation = await _contextConfig.Evaluations
                                 .FirstOrDefaultAsync(prop => prop.ProjectId == projectId 
                                                         && prop.Date.Month == DateTime.Now.Month 
-                                                        && prop.Date.Year == DateTime.Date.Year);
+                                                        && prop.Date.Year == DateTime.Now.Year);
             
             if(evaluation is not null)
                 evaluation.ProcessHealthScore = processHealthScore;
