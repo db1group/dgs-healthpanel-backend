@@ -36,50 +36,7 @@ namespace Db1HealthPanelBack.Services
 
             var result = await query.ToListAsync();
 
-            var costCenters = _contextConfig.CostCenters.ToList();
-
-            var evaluations = new List<EvaluationResponse>();
-
-            foreach(var costCenter in costCenters)
-            {
-                var whileStartDate = new DateTime(DateTime.Now.AddYears(-1).Year, 1, 1);
-
-                while(whileStartDate < DateTime.Now)
-                {
-                    var evaluationsWithSameCostCenter = result.Where(prop 
-                                                            => prop.Project!.CostCenterId == costCenter.Id
-                                                                	&& prop.Date.Year == whileStartDate.Year
-                                                                    && prop.Date.Month == whileStartDate.Month);
-                    
-                    if(evaluationsWithSameCostCenter.Any())
-                        if(evaluationsWithSameCostCenter.Count() > 1) evaluations.Add(
-                                new EvaluationResponse
-                                {
-                                    CostCenterId = costCenter.Id,
-                                    CostCenterName = costCenter.Name,
-                                    Date = evaluationsWithSameCostCenter.First().Date,
-                                    MetricsHealthScore = evaluationsWithSameCostCenter.Sum(prop => prop.MetricsHealthScore)/evaluationsWithSameCostCenter.Count(),
-                                    ProcessHealthScore = evaluationsWithSameCostCenter.Sum(prop => prop.ProcessHealthScore)/evaluationsWithSameCostCenter.Count(),
-                                    ProjectName = costCenter.Name
-                                }
-                            );
-                        else evaluations.Add(
-                            new EvaluationResponse
-                            {
-                                CostCenterId = costCenter.Id,
-                                CostCenterName = costCenter.Name,
-                                Date = evaluationsWithSameCostCenter.First().Date,
-                                MetricsHealthScore = evaluationsWithSameCostCenter.First().MetricsHealthScore,
-                                ProcessHealthScore = evaluationsWithSameCostCenter.First().ProcessHealthScore,
-                                ProjectName = costCenter.Name
-                            }
-                        );
-
-                    whileStartDate = whileStartDate.AddMonths(+1);
-                }
-            }
-
-            return evaluations;
+            return GroupEvaluationsByCostCenter(result);
         }
 
         public async Task FeedEvaluation(Guid projectId, decimal processHealthScore)
@@ -100,6 +57,56 @@ namespace Db1HealthPanelBack.Services
 
             _contextConfig.Evaluations.Update(evaluation);
             await _contextConfig.SaveChangesAsync();
-        } 
+        }
+
+        private IEnumerable<EvaluationResponse> GroupEvaluationsByCostCenter(IEnumerable<Evaluation> evalResult)
+        {
+            var costCenters = _contextConfig.CostCenters.ToList();
+            var evaluations = new List<EvaluationResponse>();
+
+            foreach (var costCenter in costCenters)
+            {
+                var whileStartDate = new DateTime(DateTime.Now.AddYears(-1).Year, 1, 1);
+
+                while (whileStartDate < DateTime.Now)
+                {
+                    var evaluationsWithSameCostCenter = evalResult.Where(prop =>
+                        prop.Project!.CostCenterId == costCenter.Id &&
+                        prop.Date.Year == whileStartDate.Year &&
+                        prop.Date.Month == whileStartDate.Month);
+
+                    if (evaluationsWithSameCostCenter.Any())
+                    {
+                        evaluations.AddRange(CreateEvaluationResponses(evaluationsWithSameCostCenter, costCenter));
+                    }
+
+                    whileStartDate = whileStartDate.AddMonths(1);
+                }
+            }
+
+            return evaluations;
+        }
+
+        private IEnumerable<EvaluationResponse> CreateEvaluationResponses(IEnumerable<Evaluation> evaluations, CostCenter costCenter)
+        {
+            var evaluationResponses = new List<EvaluationResponse>();
+
+            foreach (var evaluation in evaluations)
+            {
+                var evaluationResponse = new EvaluationResponse
+                {
+                    CostCenterId = costCenter.Id,
+                    CostCenterName = costCenter.Name,
+                    Date = evaluation.Date,
+                    MetricsHealthScore = evaluations.Average(prop => prop.MetricsHealthScore),
+                    ProcessHealthScore = evaluations.Average(prop => prop.ProcessHealthScore),
+                    ProjectName = costCenter.Name
+                };
+
+                evaluationResponses.Add(evaluationResponse);
+            }
+
+            return evaluationResponses;
+        }
     }
 }
