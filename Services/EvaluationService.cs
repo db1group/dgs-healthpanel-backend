@@ -36,7 +36,50 @@ namespace Db1HealthPanelBack.Services
 
             var result = await query.ToListAsync();
 
-            return result.Adapt<IEnumerable<EvaluationResponse>>();
+            var costCenters = _contextConfig.CostCenters.ToList();
+
+            var evaluations = new List<EvaluationResponse>();
+
+            foreach(var costCenter in costCenters)
+            {
+                var whileStartDate = new DateTime(DateTime.Now.AddYears(-1).Year, 1, 1);
+
+                while(whileStartDate < DateTime.Now)
+                {
+                    var evaluationsWithSameCostCenter = result.Where(prop 
+                                                            => prop.Project!.CostCenterId == costCenter.Id
+                                                                	&& prop.Date.Year == whileStartDate.Year
+                                                                    && prop.Date.Month == whileStartDate.Month);
+                    
+                    if(evaluationsWithSameCostCenter.Any())
+                        if(evaluationsWithSameCostCenter.Count() > 1) evaluations.Add(
+                                new EvaluationResponse
+                                {
+                                    CostCenterId = costCenter.Id,
+                                    CostCenterName = costCenter.Name,
+                                    Date = evaluationsWithSameCostCenter.First().Date,
+                                    MetricsHealthScore = evaluationsWithSameCostCenter.Sum(prop => prop.MetricsHealthScore)/evaluationsWithSameCostCenter.Count(),
+                                    ProcessHealthScore = evaluationsWithSameCostCenter.Sum(prop => prop.ProcessHealthScore)/evaluationsWithSameCostCenter.Count(),
+                                    ProjectName = costCenter.Name
+                                }
+                            );
+                        else evaluations.Add(
+                            new EvaluationResponse
+                            {
+                                CostCenterId = costCenter.Id,
+                                CostCenterName = costCenter.Name,
+                                Date = evaluationsWithSameCostCenter.First().Date,
+                                MetricsHealthScore = evaluationsWithSameCostCenter.First().MetricsHealthScore,
+                                ProcessHealthScore = evaluationsWithSameCostCenter.First().ProcessHealthScore,
+                                ProjectName = costCenter.Name
+                            }
+                        );
+
+                    whileStartDate = whileStartDate.AddMonths(+1);
+                }
+            }
+
+            return evaluations;
         }
 
         public async Task FeedEvaluation(Guid projectId, decimal processHealthScore)
