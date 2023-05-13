@@ -12,6 +12,7 @@ namespace Db1HealthPanelBack.Configs
             services.AddTransient<EvaluationService>();
             services.AddTransient<ProjectService>();
             services.AddTransient<CostCenterService>();
+            services.AddScoped<CurrentUserService>();
         }
 
         public static void AddCompressionToResponse(this IServiceCollection services)

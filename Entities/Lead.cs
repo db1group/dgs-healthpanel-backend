@@ -6,5 +6,6 @@ namespace Db1HealthPanelBack.Entities
         public ICollection<LeadProject>? LeadProjects { get; set; }
         public string? Name { get; set; }
         public bool? InTraining { get; set; }
+        public string? Email { get; set; }
     }
 }

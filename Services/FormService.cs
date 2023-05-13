@@ -15,11 +15,13 @@ namespace Db1HealthPanelBack.Services
     {
         private readonly ContextConfig _contextConfig;
         private readonly EvaluationService _evaluationService;
+        private readonly CurrentUserService _currentUserService;
 
-        public FormService(ContextConfig contextConfig, EvaluationService evaluationService)
+        public FormService(ContextConfig contextConfig, EvaluationService evaluationService, CurrentUserService currentUserService)
         {
             _contextConfig = contextConfig;
             _evaluationService = evaluationService;
+            _currentUserService = currentUserService;
         }
 
         public async Task<IActionResult> GetForm(Guid id)
@@ -115,6 +117,10 @@ namespace Db1HealthPanelBack.Services
                     AdditionalData = request.Pillars?.First(rp => rp.PillarId == p).AdditionalData
                 }).ToList()
             };
+
+            var lead = await _contextConfig.Leads.FirstOrDefaultAsync(prop => prop.Email == _currentUserService.UserName);
+
+            if(lead is not null) newAnswers.UserId = lead?.Id ?? Guid.NewGuid();
 
             await _contextConfig.AddRangeAsync(newAnswers);
             await _contextConfig.SaveChangesAsync();
