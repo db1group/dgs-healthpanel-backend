@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Db1HealthPanelBack.Configs;
 using Db1HealthPanelBack.Entities;
 using Db1HealthPanelBack.Models.Responses;
@@ -15,7 +16,8 @@ namespace Db1HealthPanelBack.Services
             _contextConfig = contextConfig;
         }
 
-        public async Task<IEnumerable<EvaluationResponse>> GetEvaluationsAsync(IEnumerable<Guid>? projectIds, IEnumerable<Guid>? costCenterIds, DateTime? startDate, DateTime? endDate)
+        public async Task<IEnumerable<EvaluationResponse>> GetEvaluationsAsync(IEnumerable<Guid>? projectIds,
+            IEnumerable<Guid>? costCenterIds, DateTime? startDate, DateTime? endDate)
         {
             var query = _contextConfig.Evaluations
                 .Include(p => p.Project)
@@ -36,7 +38,7 @@ namespace Db1HealthPanelBack.Services
 
             var result = await query.ToListAsync();
 
-            return GroupEvaluationsByCostCenter(result);
+            return await GroupEvaluationsByCostCenterAsync(result);
         }
 
         public async Task FeedEvaluation(Guid projectId, decimal processHealthScore)
@@ -59,12 +61,12 @@ namespace Db1HealthPanelBack.Services
             await _contextConfig.SaveChangesAsync();
         }
 
-        private IEnumerable<EvaluationResponse> GroupEvaluationsByCostCenter(IEnumerable<Evaluation> evalResult)
+        private async Task<IEnumerable<EvaluationResponse>> GroupEvaluationsByCostCenterAsync(IEnumerable<Evaluation> evalResult)
         {
-            var costCenters = _contextConfig.CostCenters.ToList();
-            var evaluations = new List<EvaluationResponse>();
+            var costCenters = await _contextConfig.CostCenters.ToListAsync();
+            var evaluations = new ConcurrentBag<EvaluationResponse>();
 
-            foreach (var costCenter in costCenters)
+            await Task.WhenAll(costCenters.Select(async costCenter =>
             {
                 var whileStartDate = new DateTime(DateTime.Now.AddYears(-1).Year, 1, 1);
 
@@ -77,17 +79,21 @@ namespace Db1HealthPanelBack.Services
 
                     if (evaluationsWithSameCostCenter.Any())
                     {
-                        evaluations.AddRange(CreateEvaluationResponses(evaluationsWithSameCostCenter, costCenter));
+                        var responses = await Task.Run(() => CreateEvaluationResponses(evaluationsWithSameCostCenter, costCenter));
+
+                        foreach (var response in responses)
+                            evaluations.Add(response);
                     }
 
                     whileStartDate = whileStartDate.AddMonths(1);
                 }
-            }
+            }));
 
             return evaluations;
         }
 
-        private IEnumerable<EvaluationResponse> CreateEvaluationResponses(IEnumerable<Evaluation> evaluations, CostCenter costCenter)
+        private IEnumerable<EvaluationResponse> CreateEvaluationResponses(IEnumerable<Evaluation> evaluations,
+            CostCenter costCenter)
         {
             var evaluationResponses = new List<EvaluationResponse>();
 

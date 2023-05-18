@@ -7,11 +7,11 @@ namespace Db1HealthPanelBack.Configs
     {
         public static void AddDomainServices(this IServiceCollection services)
         {
-            services.AddTransient<FormService>();
-            services.AddTransient<LeadService>();
-            services.AddTransient<EvaluationService>();
-            services.AddTransient<ProjectService>();
-            services.AddTransient<CostCenterService>();
+            services.AddScoped<FormService>();
+            services.AddScoped<LeadService>();
+            services.AddScoped<EvaluationService>();
+            services.AddScoped<ProjectService>();
+            services.AddScoped<CostCenterService>();
             services.AddScoped<CurrentUserService>();
         }
 
