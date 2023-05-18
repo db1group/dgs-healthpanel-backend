@@ -2,7 +2,6 @@ using System.Collections.Concurrent;
 using Db1HealthPanelBack.Configs;
 using Db1HealthPanelBack.Entities;
 using Db1HealthPanelBack.Models.Responses;
-using Mapster;
 using Microsoft.EntityFrameworkCore;
 
 namespace Db1HealthPanelBack.Services
