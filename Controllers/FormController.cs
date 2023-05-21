@@ -13,9 +13,7 @@ namespace Db1HealthPanelBack.Controllers
         private readonly FormService _formService;
 
         public FormController(FormService formService)
-        {
-            _formService = formService;
-        }
+            =>  _formService = formService;
 
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery(Name = "project")] Guid id)

@@ -13,9 +13,7 @@ namespace Db1HealthPanelBack.Controllers
         private readonly CostCenterService _costCenterService;
 
         public CostCenterController(CostCenterService costCenterService)
-        {
-            _costCenterService = costCenterService;
-        }
+            => _costCenterService = costCenterService;
 
         [HttpGet]
         public async Task<IEnumerable<CostCenterResponse>> GetAll()

@@ -13,15 +13,11 @@ namespace Db1HealthPanelBack.Controllers
         private readonly EvaluationService _evaluationService;
 
         public EvaluationController(EvaluationService evaluationService)
-        {
-            _evaluationService = evaluationService;
-        }
+            => _evaluationService = evaluationService;
 
         [HttpGet]
-        public async Task<IEnumerable<EvaluationResponse>> Get([FromQuery(Name = "projectIds[]")] IEnumerable<Guid>? projectIds, [FromQuery(Name = "costCenterIds[]")] IEnumerable<Guid>? costCenterIds,
-                                                                    DateTime? startDate, DateTime? endDate)
-        {
-            return await _evaluationService.GetEvaluationsAsync(projectIds, costCenterIds, startDate, endDate);
-        }
+        public async Task<IEnumerable<EvaluationResponse>> Get([FromQuery(Name = "projectIds[]")] IEnumerable<Guid>? projectIds,
+            [FromQuery(Name = "costCenterIds[]")] IEnumerable<Guid>? costCenterIds, DateTime? startDate, DateTime? endDate)
+                => await _evaluationService.GetEvaluationsAsync(projectIds, costCenterIds, startDate, endDate);
     }
 }

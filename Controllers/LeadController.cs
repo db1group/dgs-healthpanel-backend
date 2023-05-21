@@ -14,9 +14,7 @@ namespace Db1HealthPanelBack.Controllers
         private readonly LeadService _leadService;
 
         public LeadController(LeadService leadService)
-        {
-            _leadService = leadService;
-        }
+            => _leadService = leadService;
 
         [HttpGet]
         public async Task<IEnumerable<LeadResponse>> GetAll()

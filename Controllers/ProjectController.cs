@@ -14,9 +14,7 @@ namespace Db1HealthPanelBack.Controllers
         private readonly ProjectService _projectService;
 
         public ProjectController(ProjectService projectService)
-        {
-            _projectService = projectService;
-        }
+            => _projectService = projectService;
 
         [HttpGet("")]
         public async Task<IEnumerable<ProjectResponse>> GetAllProjects()

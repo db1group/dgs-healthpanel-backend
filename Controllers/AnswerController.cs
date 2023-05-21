@@ -13,9 +13,7 @@ namespace Db1HealthPanelBack.Controllers
         private readonly FormService _formService;
 
         public AnswerController(FormService formService)
-        {
-            _formService = formService;
-        }
+            => _formService = formService;
 
         [HttpPost]
         public async Task<IActionResult> Submit([FromBody] AnswerRequest request)
