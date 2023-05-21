@@ -20,7 +20,7 @@ namespace Db1HealthPanelBack.Configs
             TypeAdapterConfig<Project, ProjectResponse>
                 .NewConfig()
                 .PreserveReference(true);
-                
+
             TypeAdapterConfig<LeadProjectResponse, LeadProject>
                 .NewConfig()
                 .TwoWays()

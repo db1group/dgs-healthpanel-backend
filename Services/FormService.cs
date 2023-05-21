@@ -29,7 +29,7 @@ namespace Db1HealthPanelBack.Services
             var project = await _contextConfig.Projects
                             .FirstOrDefaultAsync(prop => prop.Id == id);
 
-            if(project is null) return new ErrorResponse("Project Not Found");
+            if (project is null) return new ErrorResponse("Project Not Found");
 
             var result = await _contextConfig.Pillars
                             .Include(prop => prop.Columns!)
@@ -65,7 +65,7 @@ namespace Db1HealthPanelBack.Services
                                                         pq.Value = questionFetched?.Value;
 
                                                         return pq;
-                                                    }).ToList();  
+                                                    }).ToList();
 
                                                     return pc;
                                                 }).ToList();
@@ -120,7 +120,7 @@ namespace Db1HealthPanelBack.Services
 
             var lead = await _contextConfig.Leads.FirstOrDefaultAsync(prop => prop.Email == _currentUserService.UserName);
 
-            if(lead is not null) newAnswers.UserId = lead?.Id ?? Guid.NewGuid();
+            if (lead is not null) newAnswers.UserId = lead?.Id ?? Guid.NewGuid();
 
             await _contextConfig.AddRangeAsync(newAnswers);
             await _contextConfig.SaveChangesAsync();

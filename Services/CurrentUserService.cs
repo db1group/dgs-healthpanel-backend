@@ -20,7 +20,7 @@ namespace Db1HealthPanelBack.Services
         public string UserName
             => _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Name)
             ?? string.Empty;
-            
+
         public string UserEmail
             => _httpContextAccessor.HttpContext?.User?.Identity is ClaimsIdentity identity
                 ? identity.Claims.ElementAt(11)?.Value ?? string.Empty : string.Empty;

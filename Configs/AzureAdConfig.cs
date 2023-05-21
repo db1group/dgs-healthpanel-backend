@@ -12,6 +12,5 @@ namespace Db1HealthPanelBack.Configs
                 .EnableTokenAcquisitionToCallDownstreamApi()
                 .AddInMemoryTokenCaches();
         }
-        
     }
 }
