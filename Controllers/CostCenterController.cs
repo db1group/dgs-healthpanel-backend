@@ -17,6 +17,7 @@ namespace Db1HealthPanelBack.Controllers
             _costCenterService = costCenterService;
         }
 
+        [HttpGet]
         public async Task<IEnumerable<CostCenterResponse>> GetAll()
             => await _costCenterService.GetAll();
     }
