@@ -125,60 +125,11 @@ namespace Db1HealthPanelBack.Services
             await _contextConfig.AddRangeAsync(newAnswers);
             await _contextConfig.SaveChangesAsync();
 
-            await _evaluationService.FeedEvaluation(newAnswers.ProjectId, await CalculateProcessScore(newAnswers.Id));
+            var processScoreCalculated = await _evaluationService.CalculateProcessScore(newAnswers.Id);
+            await _evaluationService.FeedEvaluation(newAnswers.ProjectId,
+                processScoreCalculated.Sum(prop => prop.Score), newAnswers.EvaluationId);
 
             return new AnswerResponse();
-        }
-
-        private async Task<decimal> CalculateProcessScore(Guid answerId)
-        {
-            var answerResult = await _contextConfig.Answers
-                .Include(prop => prop.Questions)
-                .Include(prop => prop.Pillars!)
-                .ThenInclude(prop => prop.Pillar!)
-                .ThenInclude(prop => prop.Columns!)
-                .ThenInclude(prop => prop.Questions)
-                .FirstAsync(prop => prop.Id == answerId);
-
-            var pillarsScore = new List<decimal>();
-
-            foreach (var pillar in answerResult.Pillars!)
-            {
-                var questionsScore = new List<dynamic>();
-
-                foreach (var column in pillar.Pillar!.Columns!)
-                {
-                    var questionsIds = column.Questions!.Select(qt => qt.Id);
-
-                    var answerQuestionsScore = answerResult.Questions!
-                        .Where(prop => questionsIds.Contains(prop.QuestionId) && prop.Value == "DONE");
-
-                    var percentageQuestion = decimal.Round((decimal)answerQuestionsScore.Count() / column.Questions!.Count * 100, 2);
-                    var questionScore = new
-                    {
-                        column.Title,
-                        PercentageQuestionScore = percentageQuestion,
-                        ColumnScore = (percentageQuestion * column.Weight) / 100,
-                        ColumnWeight = column.Weight,
-                        column.PillarId,
-                        PillarTitle = pillar.Pillar.Title,
-                        PillarWeight = pillar.Pillar.Weight
-                    };
-
-                    questionsScore.Add(questionScore);
-                }
-
-                var tempCalc = decimal.Round(questionsScore
-                    .Where(prop => prop.PillarId == pillar.PillarId)
-                    .Sum(prop => (decimal)prop.ColumnScore), 2);
-
-                var percentagePillar = Math.Min(tempCalc, 100);
-                var pillarScore = percentagePillar * pillar.Pillar.Weight / 100;
-
-                pillarsScore.Add(pillarScore ?? 0);
-            }
-
-            return pillarsScore.Sum();
         }
     }
 }
