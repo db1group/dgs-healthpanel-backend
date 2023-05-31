@@ -14,6 +14,10 @@ namespace Db1HealthPanelBack.Infra.EntityMaps
 
             builder.HasOne(property => property.Project)
                 .WithMany(property => property.Evaluations);
+
+            builder.HasOne(property => property.Answer)
+                .WithOne(property => property.Evaluation)
+                .HasForeignKey<Answer>(property => property.EvaluationId);
         }
     }
 }

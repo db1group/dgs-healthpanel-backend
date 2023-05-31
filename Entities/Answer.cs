@@ -5,6 +5,8 @@ namespace Db1HealthPanelBack.Entities
         public Guid Id { get; set; }
         public Guid ProjectId { get; set; }
         public Guid UserId { get; set; }
+        public Guid? EvaluationId { get; set; }
+        public Evaluation? Evaluation { get; set; }
         public ICollection<AnswerQuestion>? Questions { get; set; }
         public ICollection<AnswerPillar>? Pillars { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;

@@ -125,7 +125,7 @@ namespace Db1HealthPanelBack.Services
             await _contextConfig.AddRangeAsync(newAnswers);
             await _contextConfig.SaveChangesAsync();
 
-            await _evaluationService.FeedEvaluation(newAnswers.ProjectId, await CalculateProcessScore(newAnswers.Id));
+            await _evaluationService.FeedEvaluation(newAnswers.ProjectId, await CalculateProcessScore(newAnswers.Id), newAnswers.EvaluationId);
 
             return new AnswerResponse();
         }

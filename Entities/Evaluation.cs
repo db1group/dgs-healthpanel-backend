@@ -5,6 +5,8 @@ namespace Db1HealthPanelBack.Entities
         public Guid Id { get; set; }
         public Guid ProjectId { get; set; }
         public Project? Project { get; set; }
+        public Guid? AnswerId { get; set; }
+        public Answer? Answer { get; set; }
         public decimal ProcessHealthScore { get; set; }
         public decimal MetricsHealthScore { get; set; }
         public DateTime Date { get; set; }
