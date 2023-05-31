@@ -41,7 +41,11 @@ namespace Db1HealthPanelBack.Services
                     {
                         CostCenterName = evaluation.Project?.CostCenter?.Name,
                         User = evaluation!.Answer!.UserId!.ToString(),
-                        PillarScores = pillarsScoresTask.Result
+                        PillarScores = pillarsScoresTask.Result,
+                        Date = evaluation.Date,
+                        MetricsHealthScore = evaluation.MetricsHealthScore,
+                        ProcessHealthScore = evaluation.ProcessHealthScore,
+                        ProjectName = evaluation.Project?.Name
                     }));
 
             var evaluationAnalytics = await Task.WhenAll(evaluationTasks);
