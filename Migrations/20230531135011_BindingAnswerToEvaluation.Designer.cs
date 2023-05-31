@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Db1HealthPanelBack.Migrations
 {
     [DbContext(typeof(ContextConfig))]
-    [Migration("20230526114658_bindingEvaluationToAnswer")]
-    partial class bindingEvaluationToAnswer
+    [Migration("20230531135011_BindingAnswerToEvaluation")]
+    partial class BindingAnswerToEvaluation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,7 +37,7 @@ namespace Db1HealthPanelBack.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<Guid>("EvaluationId")
+                    b.Property<Guid?>("EvaluationId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("ProjectId")
@@ -168,7 +168,7 @@ namespace Db1HealthPanelBack.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("AnswerId")
+                    b.Property<Guid?>("AnswerId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
@@ -305,9 +305,7 @@ namespace Db1HealthPanelBack.Migrations
                 {
                     b.HasOne("Db1HealthPanelBack.Entities.Evaluation", "Evaluation")
                         .WithOne("Answer")
-                        .HasForeignKey("Db1HealthPanelBack.Entities.Answer", "EvaluationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("Db1HealthPanelBack.Entities.Answer", "EvaluationId");
 
                     b.Navigation("Evaluation");
                 });

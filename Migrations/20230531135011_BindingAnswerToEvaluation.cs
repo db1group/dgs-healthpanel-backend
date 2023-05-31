@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Db1HealthPanelBack.Migrations
 {
     /// <inheritdoc />
-    public partial class bindingEvaluationToAnswer : Migration
+    public partial class BindingAnswerToEvaluation : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,15 +15,13 @@ namespace Db1HealthPanelBack.Migrations
                 name: "AnswerId",
                 table: "Evaluations",
                 type: "uuid",
-                nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+                nullable: true);
 
             migrationBuilder.AddColumn<Guid>(
                 name: "EvaluationId",
                 table: "Answers",
                 type: "uuid",
-                nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+                nullable: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Answers_EvaluationId",
@@ -36,8 +34,7 @@ namespace Db1HealthPanelBack.Migrations
                 table: "Answers",
                 column: "EvaluationId",
                 principalTable: "Evaluations",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                principalColumn: "Id");
         }
 
         /// <inheritdoc />

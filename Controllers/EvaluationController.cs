@@ -20,8 +20,8 @@ namespace Db1HealthPanelBack.Controllers
             [FromQuery(Name = "costCenterIds[]")] IEnumerable<Guid>? costCenterIds, DateTime? startDate, DateTime? endDate)
                 => await _evaluationService.GetEvaluationsAsync(projectIds, costCenterIds, startDate, endDate);
 
-        [HttpGet]
-        public async Task<IEnumerable<EvaluationResponse>> GetAnalytic([FromQuery(Name = "projectIds[]")] IEnumerable<Guid>? projectIds,
+        [HttpGet("analytics")]
+        public async Task<IEnumerable<EvaluationAnalyticResponse>> GetAnalytic([FromQuery(Name = "projectIds[]")] IEnumerable<Guid>? projectIds,
             [FromQuery(Name = "costCenterIds[]")] IEnumerable<Guid>? costCenterIds, DateTime? startDate, DateTime? endDate)
                 => await _evaluationService.GetEvaluationsAnalyticAsync(projectIds, costCenterIds, startDate, endDate);
     }

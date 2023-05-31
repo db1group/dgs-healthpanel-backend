@@ -26,37 +26,27 @@ namespace Db1HealthPanelBack.Services
         }
 
         public async Task<IEnumerable<EvaluationAnalyticResponse>> GetEvaluationsAnalyticAsync(IEnumerable<Guid>? projectIds,
-            IEnumerable<Guid>? costCenterIds, DateTime? startDate, DateTime? endDate)
+        IEnumerable<Guid>? costCenterIds, DateTime? startDate, DateTime? endDate)
         {
-            var query = GetBaseQuery(projectIds, costCenterIds, startDate, endDate);
-
-            query = query.Include(x => x.Answer)
-                        .ThenInclude(x => x.Pillars)
-                        .ThenInclude(x => x.Pillar);
+            var query = GetBaseQuery(projectIds, costCenterIds, startDate, endDate)
+                            .Include(x => x.Answer)
+                            .ThenInclude(x => x!.Pillars!)
+                            .ThenInclude(x => x.Pillar);
 
             var evaluations = await query.ToListAsync();
 
-            foreach (var evaluation in evaluations)
-            {
-                yield return new EvaluationAnalyticResponse
-                {
-                    CostCenterName = evaluation.Project?.CostCenter?.Name,
-                    User = evaluation.Answer?.UserId.ToString(),
-                    PillarScores = evaluation.Answer.Pillars.ToList().Select(prop =>
+            var evaluationTasks = evaluations.Select(evaluation =>
+                CalculateProcessScore(evaluation.AnswerId ?? Guid.Empty)
+                    .ContinueWith(pillarsScoresTask => new EvaluationAnalyticResponse
                     {
-                        var totalPillarQuestions = evaluation.Answer.Questions.Count;
-                        var donePillarQuestions = evaluation.Answer.Questions.Count(x => x.Value == "DONE");
-                        var score = (donePillarQuestions / totalPillarQuestions) * 100;
-                        var columnWeight = prop.Pillar.Columns;
+                        CostCenterName = evaluation.Project?.CostCenter?.Name,
+                        User = evaluation!.Answer!.UserId!.ToString(),
+                        PillarScores = pillarsScoresTask.Result
+                    }));
 
-                        return new PillarScore
-                        {
-                            Name = prop.Pillar.Title,
-                            Score = score
-                        };
-                    })
-                };
-            }
+            var evaluationAnalytics = await Task.WhenAll(evaluationTasks);
+
+            return evaluationAnalytics;
         }
 
         public async Task FeedEvaluation(Guid projectId, decimal processHealthScore, Guid? answerId)
@@ -149,6 +139,61 @@ namespace Db1HealthPanelBack.Services
                 query = query.Where(x => x.Date <= endDate);
 
             return query;
+        }
+
+        public async Task<IEnumerable<PillarScore>> CalculateProcessScore(Guid answerId)
+        {
+            var answerResult = await _contextConfig.Answers
+                .Include(prop => prop.Questions)
+                .Include(prop => prop.Pillars!)
+                .ThenInclude(prop => prop.Pillar!)
+                .ThenInclude(prop => prop.Columns!)
+                .ThenInclude(prop => prop.Questions)
+                .FirstAsync(prop => prop.Id == answerId);
+
+            var pillarsScore = new List<PillarScore>();
+
+            foreach (var pillar in answerResult.Pillars!)
+            {
+                var questionsScore = new List<dynamic>();
+
+                foreach (var column in pillar.Pillar!.Columns!)
+                {
+                    var questionsIds = column.Questions!.Select(qt => qt.Id);
+
+                    var answerQuestionsScore = answerResult.Questions!
+                        .Where(prop => questionsIds.Contains(prop.QuestionId) && prop.Value == "DONE");
+
+                    var percentageQuestion = decimal.Round((decimal)answerQuestionsScore.Count() / column.Questions!.Count * 100, 2);
+                    var questionScore = new
+                    {
+                        column.Title,
+                        PercentageQuestionScore = percentageQuestion,
+                        ColumnScore = (percentageQuestion * column.Weight) / 100,
+                        ColumnWeight = column.Weight,
+                        column.PillarId,
+                        PillarTitle = pillar.Pillar.Title,
+                        PillarWeight = pillar.Pillar.Weight
+                    };
+
+                    questionsScore.Add(questionScore);
+                }
+
+                var tempCalc = decimal.Round(questionsScore
+                    .Where(prop => prop.PillarId == pillar.PillarId)
+                    .Sum(prop => (decimal)prop.ColumnScore), 2);
+
+                var percentagePillar = Math.Min(tempCalc, 100);
+                var pillarScore = percentagePillar * pillar.Pillar.Weight / 100;
+
+                pillarsScore.Add(new PillarScore
+                {
+                    Name = pillar.Pillar.Title!,
+                    Score = pillarScore ?? 0
+                });
+            }
+
+            return pillarsScore;
         }
     }
 }
