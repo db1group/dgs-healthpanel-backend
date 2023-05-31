@@ -26,7 +26,7 @@ namespace Db1HealthPanelBack.Services
         }
 
         public async Task<IEnumerable<EvaluationAnalyticResponse>> GetEvaluationsAnalyticAsync(IEnumerable<Guid>? projectIds,
-        IEnumerable<Guid>? costCenterIds, DateTime? startDate, DateTime? endDate)
+            IEnumerable<Guid>? costCenterIds, DateTime? startDate, DateTime? endDate)
         {
             var query = GetBaseQuery(projectIds, costCenterIds, startDate, endDate)
                             .Include(x => x.Answer)
