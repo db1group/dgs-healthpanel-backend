@@ -3,6 +3,7 @@ using System;
 using Db1HealthPanelBack.Configs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Db1HealthPanelBack.Migrations
 {
     [DbContext(typeof(ContextConfig))]
-    partial class ContextConfigModelSnapshot : ModelSnapshot
+    [Migration("20230601113122_AddSonarGates")]
+    partial class AddSonarGates
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -319,6 +322,59 @@ namespace Db1HealthPanelBack.Migrations
                     b.HasIndex("ColumnId");
 
                     b.ToTable("Questions");
+                });
+
+            modelBuilder.Entity("Db1HealthPanelBack.Entities.SonarMetric", b =>
+                {
+                    b.Property<string>("Key")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Domain")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("text");
+
+                    b.HasKey("Key");
+
+                    b.ToTable("SonarMetrics");
+                });
+
+            modelBuilder.Entity("Db1HealthPanelBack.Entities.SonarReadingDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("MetricKey")
+                        .HasColumnType("text");
+
+                    b.Property<long>("ReadingId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SonarReadingDetails");
+                });
+
+            modelBuilder.Entity("Db1HealthPanelBack.Entities.Answer", b =>
+                {
+                    b.HasOne("Db1HealthPanelBack.Entities.Evaluation", "Evaluation")
+                        .WithOne("Answer")
+                        .HasForeignKey("Db1HealthPanelBack.Entities.Answer", "EvaluationId");
+
+                    b.Navigation("Evaluation");
                 });
 
             modelBuilder.Entity("Db1HealthPanelBack.Entities.AnswerPillar", b =>

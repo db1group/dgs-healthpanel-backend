@@ -17,6 +17,9 @@ namespace Db1HealthPanelBack.Configs
         public required DbSet<LeadProject> LeadProject { get; set; }
         public required DbSet<Evaluation> Evaluations { get; set; }
         public required DbSet<CostCenter> CostCenters { get; set; }
+        public required DbSet<QualityGate> QualityGates { get; set; }
+        public required DbSet<SonarMetric> SonarMetrics { get; set; }
+        public required DbSet<SonarReadingDetail> SonarReadingDetails { get; set; }
 
         public ContextConfig(DbContextOptions options) : base(options) {}
 
@@ -33,6 +36,8 @@ namespace Db1HealthPanelBack.Configs
             modelBuilder.ApplyConfiguration(new AnswerPillarMap());
             modelBuilder.ApplyConfiguration(new AnswerQuestionMap());
             modelBuilder.ApplyConfiguration(new CostCenterMap());
+            modelBuilder.ApplyConfiguration(new QualityGateMap());
+            modelBuilder.ApplyConfiguration(new SonarMetricMap());
         }
     }
 }
