@@ -321,59 +321,6 @@ namespace Db1HealthPanelBack.Migrations
                     b.ToTable("Questions");
                 });
 
-            modelBuilder.Entity("Db1HealthPanelBack.Entities.SonarMetric", b =>
-                {
-                    b.Property<string>("Key")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Domain")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Type")
-                        .HasColumnType("text");
-
-                    b.HasKey("Key");
-
-                    b.ToTable("SonarMetrics");
-                });
-
-            modelBuilder.Entity("Db1HealthPanelBack.Entities.SonarReadingDetail", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("MetricKey")
-                        .HasColumnType("text");
-
-                    b.Property<long>("ReadingId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Value")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("SonarReadingDetails");
-                });
-
-            modelBuilder.Entity("Db1HealthPanelBack.Entities.Answer", b =>
-                {
-                    b.HasOne("Db1HealthPanelBack.Entities.Evaluation", "Evaluation")
-                        .WithOne("Answer")
-                        .HasForeignKey("Db1HealthPanelBack.Entities.Answer", "EvaluationId");
-
-                    b.Navigation("Evaluation");
-                });
-
             modelBuilder.Entity("Db1HealthPanelBack.Entities.AnswerPillar", b =>
                 {
                     b.HasOne("Db1HealthPanelBack.Entities.Answer", null)
