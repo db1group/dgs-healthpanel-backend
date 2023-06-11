@@ -39,5 +39,7 @@ namespace Db1HealthPanelBack.Configs
             modelBuilder.ApplyConfiguration(new QualityGateMap());
             modelBuilder.ApplyConfiguration(new SonarMetricMap());
         }
+
+        public bool Exists(SonarMetric metric) => Set<SonarMetric>().AsNoTracking().Any(prop => prop == metric);
     }
 }
