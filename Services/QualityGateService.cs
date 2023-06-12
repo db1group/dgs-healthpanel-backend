@@ -2,6 +2,7 @@ using Db1HealthPanelBack.Configs;
 using Db1HealthPanelBack.Entities;
 using Db1HealthPanelBack.Models.Requests;
 using Db1HealthPanelBack.Models.Responses;
+using Db1HealthPanelBack.Models.Responses.SonarResponses;
 using Mapster;
 
 namespace Db1HealthPanelBack.Services
@@ -28,5 +29,8 @@ namespace Db1HealthPanelBack.Services
 
             return new SonarQualityMetricsResponse { SincronizedMetrics = true };
         }
+
+        public async Task<string[]> GetAllSonarMetrics()
+            => await _contextConfig.GetAllSonarMetricKeys();
     }
 }

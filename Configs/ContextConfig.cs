@@ -40,6 +40,7 @@ namespace Db1HealthPanelBack.Configs
             modelBuilder.ApplyConfiguration(new SonarMetricMap());
         }
 
+        public Task<string[]> GetAllSonarMetricKeys() => Set<SonarMetric>().AsNoTracking().Select(prop => prop.Key).ToArrayAsync()!;
         public bool Exists(SonarMetric metric) => Set<SonarMetric>().AsNoTracking().Any(prop => prop == metric);
     }
 }

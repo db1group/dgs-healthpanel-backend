@@ -20,5 +20,9 @@ namespace Db1HealthPanelBack.Controllers
         [HttpPost]
         public async Task<IActionResult> SyncMetrics([FromBody] SonarQualityMetricsRequest sonarQualityMetricsRequest)
             => await _qualityGateService.SyncAllMetrics(sonarQualityMetricsRequest);
+
+        [HttpGet("sonar-metrics")]
+        public async Task<IActionResult> GetMetrics()
+            => Ok(await _qualityGateService.GetAllSonarMetrics());
     }
 }
