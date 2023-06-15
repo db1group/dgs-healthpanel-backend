@@ -127,7 +127,7 @@ namespace Db1HealthPanelBack.Services
 
             var processScoreCalculated = await _evaluationService.CalculateProcessScore(newAnswers.Id);
             await _evaluationService.FeedEvaluation(newAnswers.ProjectId,
-                processScoreCalculated.Sum(prop => prop.Score), newAnswers.EvaluationId);
+                processScoreCalculated.Sum(prop => prop.Score), newAnswers!.Id);
 
             return new AnswerResponse();
         }
