@@ -23,431 +23,484 @@ namespace Db1HealthPanelBack.Migrations
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Db1HealthPanelBack.Entities.Answer", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("uuid");
 
-                    b.Property<DateTime>("AccrualMonth")
-                        .HasColumnType("timestamp without time zone");
+                b.Property<DateTime>("AccrualMonth")
+                    .HasColumnType("timestamp without time zone");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp without time zone");
+                b.Property<DateTime>("CreatedAt")
+                    .HasColumnType("timestamp without time zone");
 
-                    b.Property<Guid?>("EvaluationId")
-                        .HasColumnType("uuid");
+                b.Property<Guid?>("EvaluationId")
+                    .HasColumnType("uuid");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uuid");
+                b.Property<Guid>("ProjectId")
+                    .HasColumnType("uuid");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp without time zone");
+                b.Property<DateTime>("UpdatedAt")
+                    .HasColumnType("timestamp without time zone");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                b.Property<Guid>("UserId")
+                    .HasColumnType("uuid");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("EvaluationId")
-                        .IsUnique();
+                b.HasIndex("EvaluationId")
+                    .IsUnique();
 
-                    b.ToTable("Answers");
-                });
+                b.ToTable("Answers", (string)null);
+            });
 
             modelBuilder.Entity("Db1HealthPanelBack.Entities.AnswerPillar", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("uuid");
 
-                    b.Property<string>("AdditionalData")
-                        .HasColumnType("text");
+                b.Property<string>("AdditionalData")
+                    .HasColumnType("text");
 
-                    b.Property<Guid?>("AnswerId")
-                        .HasColumnType("uuid");
+                b.Property<Guid?>("AnswerId")
+                    .HasColumnType("uuid");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp without time zone");
+                b.Property<DateTime>("CreatedAt")
+                    .HasColumnType("timestamp without time zone");
 
-                    b.Property<Guid>("PillarId")
-                        .HasColumnType("uuid");
+                b.Property<Guid>("PillarId")
+                    .HasColumnType("uuid");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp without time zone");
+                b.Property<DateTime>("UpdatedAt")
+                    .HasColumnType("timestamp without time zone");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("AnswerId");
+                b.HasIndex("AnswerId");
 
-                    b.HasIndex("PillarId");
+                b.HasIndex("PillarId");
 
-                    b.ToTable("AnswerPillars");
-                });
+                b.ToTable("AnswerPillars", (string)null);
+            });
 
             modelBuilder.Entity("Db1HealthPanelBack.Entities.AnswerQuestion", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("uuid");
 
-                    b.Property<Guid?>("AnswerId")
-                        .HasColumnType("uuid");
+                b.Property<Guid?>("AnswerId")
+                    .HasColumnType("uuid");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp without time zone");
+                b.Property<DateTime>("CreatedAt")
+                    .HasColumnType("timestamp without time zone");
 
-                    b.Property<Guid>("QuestionId")
-                        .HasColumnType("uuid");
+                b.Property<Guid>("QuestionId")
+                    .HasColumnType("uuid");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp without time zone");
+                b.Property<DateTime>("UpdatedAt")
+                    .HasColumnType("timestamp without time zone");
 
-                    b.Property<string>("Value")
-                        .HasColumnType("text");
+                b.Property<string>("Value")
+                    .HasColumnType("text");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("AnswerId");
+                b.HasIndex("AnswerId");
 
-                    b.HasIndex("QuestionId");
+                b.HasIndex("QuestionId");
 
-                    b.ToTable("AnswersQuestions");
-                });
+                b.ToTable("AnswersQuestions", (string)null);
+            });
 
             modelBuilder.Entity("Db1HealthPanelBack.Entities.Column", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("uuid");
 
-                    b.Property<string>("AdditionalData")
-                        .HasColumnType("text");
+                b.Property<string>("AdditionalData")
+                    .HasColumnType("text");
 
-                    b.Property<int?>("Order")
-                        .HasColumnType("integer");
+                b.Property<int?>("Order")
+                    .HasColumnType("integer");
 
-                    b.Property<Guid>("PillarId")
-                        .HasColumnType("uuid");
+                b.Property<Guid>("PillarId")
+                    .HasColumnType("uuid");
 
-                    b.Property<string>("Title")
-                        .HasColumnType("text");
+                b.Property<string>("Title")
+                    .HasColumnType("text");
 
-                    b.Property<decimal?>("Weight")
-                        .HasColumnType("numeric");
+                b.Property<decimal?>("Weight")
+                    .HasColumnType("numeric");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("PillarId");
+                b.HasIndex("PillarId");
 
-                    b.ToTable("Column");
-                });
+                b.ToTable("Column", (string)null);
+            });
 
             modelBuilder.Entity("Db1HealthPanelBack.Entities.CostCenter", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("uuid");
 
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("timestamp without time zone");
+                b.Property<DateTime?>("CreatedAt")
+                    .HasColumnType("timestamp without time zone");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
+                b.Property<string>("Name")
+                    .HasColumnType("text");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.ToTable("CostCenters");
-                });
+                b.ToTable("CostCenters", (string)null);
+            });
 
             modelBuilder.Entity("Db1HealthPanelBack.Entities.Evaluation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("uuid");
 
-                    b.Property<Guid?>("AnswerId")
-                        .HasColumnType("uuid");
+                b.Property<Guid?>("AnswerId")
+                    .HasColumnType("uuid");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp without time zone");
+                b.Property<DateTime>("CreatedAt")
+                    .HasColumnType("timestamp without time zone");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("timestamp without time zone");
+                b.Property<DateTime>("Date")
+                    .HasColumnType("timestamp without time zone");
 
-                    b.Property<decimal>("MetricsHealthScore")
-                        .HasColumnType("numeric");
+                b.Property<decimal>("MetricsHealthScore")
+                    .HasColumnType("numeric");
 
-                    b.Property<decimal>("ProcessHealthScore")
-                        .HasColumnType("numeric");
+                b.Property<decimal>("ProcessHealthScore")
+                    .HasColumnType("numeric");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uuid");
+                b.Property<Guid>("ProjectId")
+                    .HasColumnType("uuid");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("ProjectId");
+                b.HasIndex("ProjectId");
 
-                    b.ToTable("Evaluations");
-                });
+                b.ToTable("Evaluations", (string)null);
+            });
 
             modelBuilder.Entity("Db1HealthPanelBack.Entities.Lead", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("uuid");
 
-                    b.Property<string>("Email")
-                        .HasColumnType("text");
+                b.Property<string>("Email")
+                    .HasColumnType("text");
 
-                    b.Property<bool?>("InTraining")
-                        .HasColumnType("boolean");
+                b.Property<bool?>("InTraining")
+                    .HasColumnType("boolean");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
+                b.Property<string>("Name")
+                    .HasColumnType("text");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.ToTable("Leads");
-                });
+                b.ToTable("Leads", (string)null);
+            });
 
             modelBuilder.Entity("Db1HealthPanelBack.Entities.LeadProject", b =>
-                {
-                    b.Property<Guid>("LeadId")
-                        .HasColumnType("uuid");
+            {
+                b.Property<Guid>("LeadId")
+                    .HasColumnType("uuid");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uuid");
+                b.Property<Guid>("ProjectId")
+                    .HasColumnType("uuid");
 
-                    b.HasKey("LeadId", "ProjectId");
+                b.HasKey("LeadId", "ProjectId");
 
-                    b.HasIndex("ProjectId");
+                b.HasIndex("ProjectId");
 
-                    b.ToTable("LeadProject");
-                });
+                b.ToTable("LeadProject", (string)null);
+            });
 
             modelBuilder.Entity("Db1HealthPanelBack.Entities.Pillar", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("uuid");
 
-                    b.Property<string>("BackgroundColor")
-                        .HasColumnType("text");
+                b.Property<string>("BackgroundColor")
+                    .HasColumnType("text");
 
-                    b.Property<int?>("Order")
-                        .HasColumnType("integer");
+                b.Property<int?>("Order")
+                    .HasColumnType("integer");
 
-                    b.Property<string>("Title")
-                        .HasColumnType("text");
+                b.Property<string>("Title")
+                    .HasColumnType("text");
 
-                    b.Property<decimal?>("Weight")
-                        .HasColumnType("numeric");
+                b.Property<decimal?>("Weight")
+                    .HasColumnType("numeric");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.ToTable("Pillars");
-                });
+                b.ToTable("Pillars", (string)null);
+            });
 
             modelBuilder.Entity("Db1HealthPanelBack.Entities.Project", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("uuid");
 
-                    b.Property<string>("AdditionalData")
-                        .HasColumnType("text");
+                b.Property<string>("AdditionalData")
+                    .HasColumnType("text");
 
-                    b.Property<Guid>("CostCenterId")
-                        .HasColumnType("uuid");
+                b.Property<Guid>("CostCenterId")
+                    .HasColumnType("uuid");
 
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("timestamp without time zone");
+                b.Property<DateTime?>("CreatedAt")
+                    .HasColumnType("timestamp without time zone");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
+                b.Property<string>("Name")
+                    .HasColumnType("text");
 
-                    b.Property<long?>("QuantityDevs")
-                        .HasColumnType("bigint");
+                b.Property<long?>("QuantityDevs")
+                    .HasColumnType("bigint");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("CostCenterId");
+                b.HasIndex("CostCenterId");
 
-                    b.ToTable("Projects");
-                });
+                b.ToTable("Projects", (string)null);
+            });
 
             modelBuilder.Entity("Db1HealthPanelBack.Entities.QualityGate", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("uuid");
 
-                    b.Property<string>("MetricClassification")
-                        .HasColumnType("text");
+                b.Property<string>("MetricClassification")
+                    .HasColumnType("text");
 
-                    b.Property<string>("MetricName")
-                        .HasColumnType("text");
+                b.Property<string>("MetricName")
+                    .HasColumnType("text");
 
-                    b.Property<string>("ProjectKey")
-                        .HasColumnType("text");
+                b.Property<string>("ProjectKey")
+                    .HasColumnType("text");
 
-                    b.Property<DateTime>("ScanDate")
-                        .HasColumnType("timestamp without time zone");
+                b.Property<DateTime>("ScanDate")
+                    .HasColumnType("timestamp without time zone");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.ToTable("QualityGates");
-                });
-
-            modelBuilder.Entity("Db1HealthPanelBack.Entities.Question", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ColumnId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("Value")
-                        .HasColumnType("boolean");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ColumnId");
-
-                    b.ToTable("Questions");
-                });
-
-            modelBuilder.Entity("Db1HealthPanelBack.Entities.AnswerPillar", b =>
-                {
-                    b.HasOne("Db1HealthPanelBack.Entities.Answer", null)
-                        .WithMany("Pillars")
-                        .HasForeignKey("AnswerId");
-
-                    b.HasOne("Db1HealthPanelBack.Entities.Pillar", "Pillar")
-                        .WithMany()
-                        .HasForeignKey("PillarId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Pillar");
-                });
-
-            modelBuilder.Entity("Db1HealthPanelBack.Entities.AnswerQuestion", b =>
-                {
-                    b.HasOne("Db1HealthPanelBack.Entities.Answer", null)
-                        .WithMany("Questions")
-                        .HasForeignKey("AnswerId");
-
-                    b.HasOne("Db1HealthPanelBack.Entities.Question", "Question")
-                        .WithMany()
-                        .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Question");
-                });
-
-            modelBuilder.Entity("Db1HealthPanelBack.Entities.Column", b =>
-                {
-                    b.HasOne("Db1HealthPanelBack.Entities.Pillar", null)
-                        .WithMany("Columns")
-                        .HasForeignKey("PillarId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Db1HealthPanelBack.Entities.Evaluation", b =>
-                {
-                    b.HasOne("Db1HealthPanelBack.Entities.Project", "Project")
-                        .WithMany("Evaluations")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Project");
-                });
-
-            modelBuilder.Entity("Db1HealthPanelBack.Entities.LeadProject", b =>
-                {
-                    b.HasOne("Db1HealthPanelBack.Entities.Lead", "Lead")
-                        .WithMany("LeadProjects")
-                        .HasForeignKey("LeadId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Db1HealthPanelBack.Entities.Project", "Project")
-                        .WithMany("LeadProjects")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Lead");
-
-                    b.Navigation("Project");
-                });
-
-            modelBuilder.Entity("Db1HealthPanelBack.Entities.Project", b =>
-                {
-                    b.HasOne("Db1HealthPanelBack.Entities.CostCenter", "CostCenter")
-                        .WithMany("Projects")
-                        .HasForeignKey("CostCenterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CostCenter");
-                });
+                b.ToTable("QualityGates", (string)null);
+            });
 
             modelBuilder.Entity("Db1HealthPanelBack.Entities.Question", b =>
-                {
-                    b.HasOne("Db1HealthPanelBack.Entities.Column", null)
-                        .WithMany("Questions")
-                        .HasForeignKey("ColumnId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("uuid");
+
+                b.Property<Guid>("ColumnId")
+                    .HasColumnType("uuid");
+
+                b.Property<string>("Description")
+                    .HasColumnType("text");
+
+                b.Property<bool>("Value")
+                    .HasColumnType("boolean");
+
+                b.HasKey("Id");
+
+                b.HasIndex("ColumnId");
+
+                b.ToTable("Questions", (string)null);
+            });
+
+            modelBuilder.Entity("Db1HealthPanelBack.Entities.SonarMetric", b =>
+            {
+                b.Property<string>("Key")
+                    .HasColumnType("text");
+
+                b.Property<string>("Description")
+                    .HasColumnType("text");
+
+                b.Property<string>("Domain")
+                    .HasColumnType("text");
+
+                b.Property<string>("Name")
+                    .HasColumnType("text");
+
+                b.Property<string>("Type")
+                    .HasColumnType("text");
+
+                b.HasKey("Key");
+
+                b.ToTable("SonarMetrics", (string)null);
+            });
+
+            modelBuilder.Entity("Db1HealthPanelBack.Entities.SonarReadingDetail", b =>
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer");
+
+                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                b.Property<string>("MetricKey")
+                    .HasColumnType("text");
+
+                b.Property<long>("ReadingId")
+                    .HasColumnType("bigint");
+
+                b.Property<string>("Value")
+                    .HasColumnType("text");
+
+                b.HasKey("Id");
+
+                b.ToTable("SonarReadingDetails", (string)null);
+            });
 
             modelBuilder.Entity("Db1HealthPanelBack.Entities.Answer", b =>
-                {
-                    b.Navigation("Pillars");
+            {
+                b.HasOne("Db1HealthPanelBack.Entities.Evaluation", "Evaluation")
+                    .WithOne("Answer")
+                    .HasForeignKey("Db1HealthPanelBack.Entities.Answer", "EvaluationId");
 
-                    b.Navigation("Questions");
-                });
+                b.Navigation("Evaluation");
+            });
+
+            modelBuilder.Entity("Db1HealthPanelBack.Entities.AnswerPillar", b =>
+            {
+                b.HasOne("Db1HealthPanelBack.Entities.Answer", null)
+                    .WithMany("Pillars")
+                    .HasForeignKey("AnswerId");
+
+                b.HasOne("Db1HealthPanelBack.Entities.Pillar", "Pillar")
+                    .WithMany()
+                    .HasForeignKey("PillarId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.Navigation("Pillar");
+            });
+
+            modelBuilder.Entity("Db1HealthPanelBack.Entities.AnswerQuestion", b =>
+            {
+                b.HasOne("Db1HealthPanelBack.Entities.Answer", null)
+                    .WithMany("Questions")
+                    .HasForeignKey("AnswerId");
+
+                b.HasOne("Db1HealthPanelBack.Entities.Question", "Question")
+                    .WithMany()
+                    .HasForeignKey("QuestionId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.Navigation("Question");
+            });
 
             modelBuilder.Entity("Db1HealthPanelBack.Entities.Column", b =>
-                {
-                    b.Navigation("Questions");
-                });
-
-            modelBuilder.Entity("Db1HealthPanelBack.Entities.CostCenter", b =>
-                {
-                    b.Navigation("Projects");
-                });
+            {
+                b.HasOne("Db1HealthPanelBack.Entities.Pillar", null)
+                    .WithMany("Columns")
+                    .HasForeignKey("PillarId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+            });
 
             modelBuilder.Entity("Db1HealthPanelBack.Entities.Evaluation", b =>
-                {
-                    b.Navigation("Answer");
-                });
+            {
+                b.HasOne("Db1HealthPanelBack.Entities.Project", "Project")
+                    .WithMany("Evaluations")
+                    .HasForeignKey("ProjectId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
 
-            modelBuilder.Entity("Db1HealthPanelBack.Entities.Lead", b =>
-                {
-                    b.Navigation("LeadProjects");
-                });
+                b.Navigation("Project");
+            });
 
-            modelBuilder.Entity("Db1HealthPanelBack.Entities.Pillar", b =>
-                {
-                    b.Navigation("Columns");
-                });
+            modelBuilder.Entity("Db1HealthPanelBack.Entities.LeadProject", b =>
+            {
+                b.HasOne("Db1HealthPanelBack.Entities.Lead", "Lead")
+                    .WithMany("LeadProjects")
+                    .HasForeignKey("LeadId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.HasOne("Db1HealthPanelBack.Entities.Project", "Project")
+                    .WithMany("LeadProjects")
+                    .HasForeignKey("ProjectId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.Navigation("Lead");
+
+                b.Navigation("Project");
+            });
 
             modelBuilder.Entity("Db1HealthPanelBack.Entities.Project", b =>
-                {
-                    b.Navigation("Evaluations");
+            {
+                b.HasOne("Db1HealthPanelBack.Entities.CostCenter", "CostCenter")
+                    .WithMany("Projects")
+                    .HasForeignKey("CostCenterId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
 
-                    b.Navigation("LeadProjects");
-                });
+                b.Navigation("CostCenter");
+            });
+
+            modelBuilder.Entity("Db1HealthPanelBack.Entities.Question", b =>
+            {
+                b.HasOne("Db1HealthPanelBack.Entities.Column", null)
+                    .WithMany("Questions")
+                    .HasForeignKey("ColumnId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+            });
+
+            modelBuilder.Entity("Db1HealthPanelBack.Entities.Answer", b =>
+            {
+                b.Navigation("Pillars");
+
+                b.Navigation("Questions");
+            });
+
+            modelBuilder.Entity("Db1HealthPanelBack.Entities.Column", b =>
+            {
+                b.Navigation("Questions");
+            });
+
+            modelBuilder.Entity("Db1HealthPanelBack.Entities.CostCenter", b =>
+            {
+                b.Navigation("Projects");
+            });
+
+            modelBuilder.Entity("Db1HealthPanelBack.Entities.Evaluation", b =>
+            {
+                b.Navigation("Answer");
+            });
+
+            modelBuilder.Entity("Db1HealthPanelBack.Entities.Lead", b =>
+            {
+                b.Navigation("LeadProjects");
+            });
+
+            modelBuilder.Entity("Db1HealthPanelBack.Entities.Pillar", b =>
+            {
+                b.Navigation("Columns");
+            });
+
+            modelBuilder.Entity("Db1HealthPanelBack.Entities.Project", b =>
+            {
+                b.Navigation("Evaluations");
+
+                b.Navigation("LeadProjects");
+            });
 #pragma warning restore 612, 618
         }
     }
