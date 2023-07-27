@@ -1,3 +1,4 @@
+using Db1HealthPanelBack.Infra.Http;
 using Db1HealthPanelBack.Services;
 using Microsoft.AspNetCore.ResponseCompression;
 
@@ -14,6 +15,9 @@ namespace Db1HealthPanelBack.Configs
             services.AddScoped<CostCenterService>();
             services.AddScoped<CurrentUserService>();
             services.AddScoped<QualityGateService>();
+            services.AddScoped<HttpService>();
+            services.AddScoped<SonarHttpService>();
+            services.AddScoped<StackService>();
         }
 
         public static void AddCompressionToResponse(this IServiceCollection services)

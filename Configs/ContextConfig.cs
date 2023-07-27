@@ -20,6 +20,8 @@ namespace Db1HealthPanelBack.Configs
         public required DbSet<QualityGate> QualityGates { get; set; }
         public required DbSet<SonarMetric> SonarMetrics { get; set; }
         public required DbSet<SonarReadingDetail> SonarReadingDetails { get; set; }
+        public required DbSet<Stack> Stacks { get; set; }
+        public required DbSet<StackProject> StackProjects { get; set; }
 
         public ContextConfig(DbContextOptions options) : base(options) {}
 
@@ -38,6 +40,8 @@ namespace Db1HealthPanelBack.Configs
             modelBuilder.ApplyConfiguration(new CostCenterMap());
             modelBuilder.ApplyConfiguration(new QualityGateMap());
             modelBuilder.ApplyConfiguration(new SonarMetricMap());
+            modelBuilder.ApplyConfiguration(new StackMap());
+            modelBuilder.ApplyConfiguration(new StackProjectMap());
         }
 
         public Task<string[]> GetAllSonarMetricKeys() => Set<SonarMetric>().AsNoTracking().Select(prop => prop.Key).ToArrayAsync()!;

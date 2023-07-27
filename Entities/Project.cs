@@ -11,5 +11,6 @@ namespace Db1HealthPanelBack.Entities
         public Guid CostCenterId {get;set;}
         public CostCenter? CostCenter {get;set;}
         public DateTime? CreatedAt { get; set; } = DateTime.Now;
+        public ICollection<StackProject>? StackProjects { get; set; }
     }
 }
