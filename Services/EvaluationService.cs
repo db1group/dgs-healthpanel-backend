@@ -56,8 +56,8 @@ namespace Db1HealthPanelBack.Services
                     User = evaluation.Answer is not null ? evaluation.Answer.UserId.ToString() : null,
                     PillarScores = pillarsScores.Any() ? pillarsScores : new List<PillarScore>(),
                     Date = evaluation.Date,
-                    MetricsHealthScore = evaluation.MetricsHealthScore,
-                    ProcessHealthScore = evaluation.ProcessHealthScore,
+                    MetricsHealthScore = Math.Round(evaluation.MetricsHealthScore, 2),
+                    ProcessHealthScore = Math.Round(evaluation.ProcessHealthScore, 2),
                     ProjectName = evaluation.Project?.Name
                 };
 
@@ -135,8 +135,8 @@ namespace Db1HealthPanelBack.Services
                     CostCenterId = costCenter.Id,
                     CostCenterName = costCenter.Name,
                     Date = evaluation.Date,
-                    MetricsHealthScore = evaluations.Average(prop => prop.MetricsHealthScore),
-                    ProcessHealthScore = evaluations.Average(prop => prop.ProcessHealthScore),
+                    MetricsHealthScore = Math.Round(evaluations.Average(prop => prop.MetricsHealthScore), 2),
+                    ProcessHealthScore = Math.Round(evaluations.Average(prop => prop.ProcessHealthScore), 2),
                     ProjectName = costCenter.Name
                 };
             }
