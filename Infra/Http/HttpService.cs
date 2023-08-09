@@ -14,9 +14,9 @@ public class HttpService
 
     public async Task<T?> Get<T>(RequestData request) where T : class
     {
-        AddHeaders(request.Headers);
+        AddHeaders(request.Headers!);
 
-        var response = await _httpClient.GetAsync(new Uri(request.Uri));
+        var response = await _httpClient.GetAsync(new Uri(request.Uri!));
 
         return await GetContent<T>(response);
     }

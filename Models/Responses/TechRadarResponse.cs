@@ -2,8 +2,8 @@
 {
     public class TechRadarResponse
     {
-        public string Quadrant { get; set; }
+        public string? Quadrant { get; set; }
 
-        public List<TechRadarModel> Techs { get; set; }
+        public List<TechRadarModel>? Techs { get; set; }
     }
 }

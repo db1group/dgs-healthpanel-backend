@@ -39,7 +39,7 @@ public class StackService
     public async Task<List<StackResponse>> GetAll()
         => await _contextConfig.Stacks
             .AsQueryable()
-            .Select(s => new StackResponse(s.Id, s.Name))
+            .Select(s => new StackResponse(s.Id!, s.Name!))
             .ToListAsync();
 
     public async Task<List<ProjectStacksResponse>> GetStacks(List<Guid>? projectIds)
@@ -50,7 +50,7 @@ public class StackService
         foreach (var project in projects)
         {
             var projectStacks = project.StackProjects?
-                .Select(s => new StackResponse(s.StackId, s.Stack?.Name ?? string.Empty))
+                .Select(s => new StackResponse(s.StackId!, s.Stack?.Name ?? string.Empty))
                 .ToList() ?? new List<StackResponse>();
 
             listOfProjects.Add(new ProjectStacksResponse(project.Id, project.Name ?? string.Empty, projectStacks));
@@ -68,7 +68,7 @@ public class StackService
             var projects = stack.StackProjects!
                 .Select(s => new ProjectStackResponse(s.Project!.Id, s.Project!.Name ?? string.Empty))
                 .ToList();
-            listOfStacks.Add(new StackProjectsResponse(stack.Id, stack.Name, projects));
+            listOfStacks.Add(new StackProjectsResponse(stack.Id!, stack.Name!, projects));
         }
 
         return listOfStacks;
@@ -78,7 +78,7 @@ public class StackService
     {
         if (projectId != request.ProjectId) return new ErrorResponse("Project of route different from request");
         
-        if (!request.StacksId.Any()) return new ErrorResponse("The StacksId field is required");
+        if (!request.StacksId!.Any()) return new ErrorResponse("The StacksId field is required");
 
         var stacks = await _contextConfig.StackProjects
             .AsQueryable()
@@ -86,7 +86,7 @@ public class StackService
             .ToListAsync();
 
         
-        stacks.ForEach(stack => stack.Confirmed = request.StacksId.Contains(stack.StackId));
+        stacks.ForEach(stack => stack.Confirmed = request.StacksId!.Contains(stack.StackId!));
         
         if (stacks.Any(s => !s.Confirmed))
             _contextConfig.RemoveRange(stacks.FindAll(s => !s.Confirmed));
@@ -104,7 +104,7 @@ public class StackService
             ? await _contextConfig.Stacks.AsQueryable()
                 .Include(p => p.StackProjects)!
                 .ThenInclude(s => s.Project)
-                .Where(s => languageIds.Contains(s.Id) &&
+                .Where(s => languageIds.Contains(s.Id!) &&
                             _contextConfig.StackProjects.Any(sp => sp.StackId == s.Id))
                 .ToListAsync()
             : await _contextConfig.Stacks.AsQueryable()
@@ -135,8 +135,8 @@ public class StackService
         var listOfStacks = new List<string>();
         foreach (var projectKey in projectKeys)
         {
-            var stacks = await _sonarHttpService.GetProjectStacks(projectKey);
-            listOfStacks.AddRange(stacks);
+            var stacks = await _sonarHttpService.GetProjectStacks(projectKey!);
+            listOfStacks.AddRange(stacks!);
         }
 
         if (!listOfStacks.Any()) return;

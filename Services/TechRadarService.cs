@@ -7,7 +7,7 @@ namespace Db1HealthPanelBack.Services
     {
         public static List<TechRadarResponse> Split(TechRadarRequest techRadar)
         {
-            var groupedTechsByQuadrant = techRadar.Items.GroupBy(tech => tech.Quadrant);
+            var groupedTechsByQuadrant = techRadar.Items!.GroupBy(tech => tech.Quadrant);
 
             List<TechRadarResponse> splitTechs = new List<TechRadarResponse>();
             foreach (var group in groupedTechsByQuadrant)
