@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Db1HealthPanelBack.Controllers
 {
-    [ApiController]
     [Authorize]
+    [ApiController]
     [Route("[controller]")]
     public class FormController : ControllerBase
     {

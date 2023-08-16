@@ -2,6 +2,6 @@
 {
     public class TechRadarRequest
     {
-        public List<TechRadarModel>? Items { get; set; }
+        public List<ProjectTechRadarRequest>? Items { get; set; }
     }
 }

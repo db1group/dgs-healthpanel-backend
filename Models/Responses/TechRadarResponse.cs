@@ -2,8 +2,10 @@
 {
     public class TechRadarResponse
     {
-        public string? Quadrant { get; set; }
+        public string? Ring { get; set; }
 
-        public List<TechRadarModel>? Techs { get; set; }
+        public string? Title { get; set; }
+
+        public bool IsPresent { get; set; }
     }
 }
