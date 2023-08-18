@@ -1,0 +1,27 @@
+name: CD-HealthPanel-Backend
+on:
+  workflow_dispatch:
+  #push:
+  #  branches:
+  #    - main
+
+jobs:
+  build:
+    name: Deploy-ssh
+    runs-on: ubuntu-latest
+    steps:
+      - name: Executing remote ssh commands
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd db1-projects/health-panel-backend/;
+            docker container stop HealthPanel;
+            docker rm HealthPanel;
+            git pull origin main
+            docker rmi health-panel;
+            docker build -t health-panel .;
+            docker run -d -t -i -e ASPNETCORE_ENVIRONMENT=Production -p 5000:5000 --name HealthPanel health-panel;
