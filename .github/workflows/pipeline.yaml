@@ -18,5 +18,10 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd db1-projects/;
-            touch teste_pipe.txt
+            cd db1-projects/health-panel-backend/;
+            docker container stop HealthPanel;
+            docker rm HealthPanel;
+            git pull origin main
+            docker rmi health-panel;
+            docker build -t health-panel .;
+            docker run -d -t -i -e ASPNETCORE_ENVIRONMENT=Production -p 5000:5000 --name HealthPanel health-panel;
