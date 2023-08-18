@@ -1,5 +1,4 @@
 name: CD-HealthPanel-Backend
-
 on:
   workflow_dispatch:
   #push:
@@ -7,18 +6,17 @@ on:
   #    - main
 
 jobs:
-  Deploy-ssh:
-
+  build:
+    name: Deploy-ssh
     runs-on: ubuntu-latest
-
     steps:
-      - name: Deploy-ssh
-        uses: invi5H/ssh-action@v1
+      - name: Executing remote ssh commands
+        uses: appleboy/ssh-action@v1.0.0
         with:
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-          SSH_PORT: ${{ secrets.SSH_PORT }}
-          SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-      - run: |
-          cd db1-projects/;
-          touch teste_pipe.txt
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd db1-projects/;
+            touch teste_pipe.txt
