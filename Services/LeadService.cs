@@ -44,6 +44,7 @@ namespace Db1HealthPanelBack.Services
             if (leadResult is null) return new ErrorResponse("Lead Not Found");
 
             leadResult.Name = lead.Name;
+            leadResult.Email = lead.Email;
             leadResult.InTraining = lead.InTraining;
 
             if (lead.LeadProjects is not null)
