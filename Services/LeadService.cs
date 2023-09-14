@@ -4,6 +4,7 @@ using Db1HealthPanelBack.Models.Requests;
 using Db1HealthPanelBack.Models.Responses;
 using Db1HealthPanelBack.Models.Responses.Errors;
 using Mapster;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -81,6 +82,17 @@ namespace Db1HealthPanelBack.Services
         public async Task<IActionResult> CreateLead(LeadRequest lead)
         {
             var leadEntity = lead.Adapt<Lead>();
+
+            var isDuplicate = _contextConfig.Leads.Where(lead => lead.Name == leadEntity.Name || lead.Email == leadEntity.Email).Any();
+
+            if (isDuplicate)
+            {
+                var resultError = leadEntity.Adapt<LeadResponse>();
+
+                resultError.SetStatusCode(409);
+
+                return resultError;
+            }
 
             await _contextConfig.AddAsync(leadEntity);
             await _contextConfig.SaveChangesAsync();
