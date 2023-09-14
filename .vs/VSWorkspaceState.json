@@ -1,16 +1,13 @@
 {
   "ExpandedNodes": [
     "",
-    "\\Configs",
-    "\\Controllers",
     "\\Entities",
-    "\\Infra",
-    "\\Infra\\EntityMaps",
+    "\\Migrations",
     "\\Models",
-    "\\Models\\Requests",
     "\\Models\\Responses",
-    "\\Models\\Responses\\Errors"
+    "\\Properties",
+    "\\Services"
   ],
-  "SelectedNode": "\\Services\\LeadService.cs",
+  "SelectedNode": "\\appsettings.Development.json",
   "PreviewInSolutionExplorer": false
 }

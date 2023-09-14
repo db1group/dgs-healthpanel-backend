@@ -3,3 +3,4 @@ obj*
 bin*
 .sonarqube*
 .config*
+.vs*
