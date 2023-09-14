@@ -1,0 +1,16 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\Configs",
+    "\\Controllers",
+    "\\Entities",
+    "\\Infra",
+    "\\Infra\\EntityMaps",
+    "\\Models",
+    "\\Models\\Requests",
+    "\\Models\\Responses",
+    "\\Models\\Responses\\Errors"
+  ],
+  "SelectedNode": "\\Services\\LeadService.cs",
+  "PreviewInSolutionExplorer": false
+}
