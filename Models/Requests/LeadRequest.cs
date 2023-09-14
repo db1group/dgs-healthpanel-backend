@@ -8,6 +8,7 @@ namespace Db1HealthPanelBack.Models.Requests
 
         [Required]
         public string? Name { get; set; }
+
         [Required]
         public string? Email { get; set; }
 
