@@ -43,6 +43,17 @@ namespace Db1HealthPanelBack.Services
                                                         .FirstOrDefaultAsync(property => property.Id == id);
 
             if (leadResult is null) return new ErrorResponse("Lead Not Found");
+            
+            var isDuplicate = _contextConfig.Leads.Where(lead => lead.Name == leadResult.Name || lead.Email == leadResult.Email).Any();
+
+            if (isDuplicate)
+            {
+                var resultError = leadResult.Adapt<LeadResponse>();
+
+                resultError.SetStatusCode(409);
+
+                return resultError;
+            }
 
             leadResult.Name = lead.Name;
             leadResult.Email = lead.Email;
