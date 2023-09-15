@@ -20,7 +20,7 @@ namespace Db1HealthPanelBack.Services
 
         public async Task<IEnumerable<LeadResponse>> GetAllLeads()
         {
-            var leads = await _contextConfig.Leads.ToListAsync();
+            var leads = await _contextConfig.Leads.OrderBy(pro => pro.Name).ToListAsync();
 
             return leads.Adapt<List<LeadResponse>>();
         }
