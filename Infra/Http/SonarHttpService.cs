@@ -13,18 +13,18 @@ public class SonarHttpService
         _configuration = configuration;
     }
 
-    public async Task<List<string>> GetSonarProjectNames(string projectName)
+    public async Task<List<string?>> GetSonarProjectNames(string projectName)
     {
         var request = BuildRequest(route: "api/projects/search", queryString: $"q={projectName}");
 
         var project = await _httpService.Get<SonarProject>(request);
 
         return project is null
-            ? new List<string>()
-            : project.Projects?.Select(p => p.Key).ToList() ?? new List<string>();
+            ? new List<string?>()
+            : project.Projects?.Select(p => p.Key).ToList() ?? new List<string?>();
     }
     
-    public async Task<List<string>> GetProjectStacks(string projectKey)
+    public async Task<List<string?>> GetProjectStacks(string projectKey)
     {
         var request = BuildRequest(
             route: "api/measures/component",
@@ -33,7 +33,7 @@ public class SonarHttpService
 
         var stack = await _httpService.Get<SonarStack>(request);
 
-        var listOfStacks = new List<string>();
+        var listOfStacks = new List<string?>();
         foreach (var measure in stack?.Component?.Measures ?? new List<Measure>())
         {
             listOfStacks.AddRange(measure.Language);     
