@@ -25,6 +25,7 @@ namespace Db1HealthPanelBack.Services
                             .Include(prop => prop.LeadProjects!)
                             .ThenInclude(prop => prop.Lead)
                             .Include(prop => prop.CostCenter)
+                            .OrderBy(pro => pro.Name)
                             .ToListAsync();
 
             return projects.Adapt<ICollection<ProjectResponse>>();
