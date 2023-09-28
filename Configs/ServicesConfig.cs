@@ -11,6 +11,7 @@ namespace Db1HealthPanelBack.Configs
             services.AddScoped<FormService>();
             services.AddScoped<LeadService>();
             services.AddScoped<EvaluationService>();
+            services.AddScoped<MetricsHealthScoreService>();
             services.AddScoped<ProjectService>();
             services.AddScoped<CostCenterService>();
             services.AddScoped<CurrentUserService>();

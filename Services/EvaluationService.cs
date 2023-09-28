@@ -72,7 +72,7 @@ namespace Db1HealthPanelBack.Services
         }
 
 
-        public async Task FeedEvaluation(Guid projectId, decimal processHealthScore, Guid? answerId)
+        public async Task FeedEvaluation(Guid projectId, decimal processHealthScore, decimal metricsHealthScore, Guid? answerId)
         {
             var evaluation = await _contextConfig.Evaluations
                                 .FirstOrDefaultAsync(prop => prop.ProjectId == projectId
@@ -80,12 +80,16 @@ namespace Db1HealthPanelBack.Services
                                                         && prop.Date.Year == DateTime.Now.Year);
 
             if (evaluation is not null)
+            {
                 evaluation.ProcessHealthScore = processHealthScore;
+                evaluation.MetricsHealthScore = metricsHealthScore;
+            } 
             else evaluation = new Evaluation
             {
                 Date = DateTime.Now,
                 ProcessHealthScore = processHealthScore,
-                ProjectId = projectId
+                ProjectId = projectId,
+                MetricsHealthScore = metricsHealthScore
             };
 
             evaluation.AnswerId = answerId;
