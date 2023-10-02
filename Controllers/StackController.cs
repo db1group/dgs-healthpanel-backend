@@ -40,4 +40,9 @@ public class StackController : ControllerBase
         [FromRoute] Guid projectId,
         [FromBody] ProjectStackRequest request)
         => await _stackService.ConfirmStacks(projectId, request);
+    
+    [HttpPost("add/stack")]
+    public async Task<IActionResult> AddStacks(
+        [FromBody] AddStackRequest request)
+        => await _stackService.AddStacks(request);
 }

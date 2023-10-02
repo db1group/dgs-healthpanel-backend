@@ -7,6 +7,7 @@ using Db1HealthPanelBack.Models.Responses;
 using Db1HealthPanelBack.Models.Responses.Errors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Db1HealthPanelBack.Services;
 
@@ -155,5 +156,28 @@ public class StackService
         }
 
         await _contextConfig.SaveChangesAsync();
+    }
+    
+    public async Task<IActionResult> AddStacks(AddStackRequest request)
+    {
+        if (request.StackId.IsNullOrEmpty()) return new ErrorResponse("The StacksId field is required");
+
+        var stacks = await _contextConfig.StackProjects
+            .Where(sp => sp.ProjectId == request.ProjectId)
+            .FirstOrDefaultAsync(proj => proj.StackId == request.StackId);
+        
+        if (stacks is not null) return new ErrorResponse("Stack already exists");
+        
+        var newStack = new StackProject()
+        {
+            ProjectId = request.ProjectId,
+            StackId = request.StackId,
+            Confirmed = false
+        };
+        
+        await _contextConfig.StackProjects.AddAsync(newStack);
+        await _contextConfig.SaveChangesAsync();
+        
+        return new ObjectResult(null) { StatusCode = (int) HttpStatusCode.NoContent };
     }
 }

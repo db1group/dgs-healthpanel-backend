@@ -5,3 +5,4 @@ bin*
 .sonarqube*
 .config*
 .vs*
+.idea*
