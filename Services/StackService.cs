@@ -172,7 +172,7 @@ public class StackService
         {
             ProjectId = request.ProjectId,
             StackId = request.StackId,
-            Confirmed = true
+            Confirmed = false
         };
         
         await _contextConfig.StackProjects.AddAsync(newStack);
