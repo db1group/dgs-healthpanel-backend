@@ -12,5 +12,6 @@ namespace Db1HealthPanelBack.Entities
         public CostCenter? CostCenter {get;set;}
         public DateTime? CreatedAt { get; set; } = DateTime.Now;
         public ICollection<StackProject>? StackProjects { get; set; }
+        public string? MetricsCollectorProjectName { get; set; }
     }
 }

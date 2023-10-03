@@ -16,12 +16,15 @@ namespace Db1HealthPanelBack.Services
         private readonly ContextConfig _contextConfig;
         private readonly EvaluationService _evaluationService;
         private readonly CurrentUserService _currentUserService;
+        private readonly MetricsHealthScoreService _metricsHealthScoreService;
 
-        public FormService(ContextConfig contextConfig, EvaluationService evaluationService, CurrentUserService currentUserService)
+        public FormService(ContextConfig contextConfig, EvaluationService evaluationService, 
+            CurrentUserService currentUserService, MetricsHealthScoreService metricsHealthScoreService)
         {
             _contextConfig = contextConfig;
             _evaluationService = evaluationService;
             _currentUserService = currentUserService;
+            _metricsHealthScoreService = metricsHealthScoreService;
         }
 
         public async Task<IActionResult> GetForm(Guid id)
@@ -126,8 +129,9 @@ namespace Db1HealthPanelBack.Services
             await _contextConfig.SaveChangesAsync();
 
             var processScoreCalculated = await _evaluationService.CalculateProcessScore(newAnswers.Id);
+            var metricsHealthScoreCalculated = await _metricsHealthScoreService.GetMetricsHealthScore(project);
             await _evaluationService.FeedEvaluation(newAnswers.ProjectId,
-                processScoreCalculated.Sum(prop => prop.Score), newAnswers!.Id);
+                processScoreCalculated.Sum(prop => prop.Score), metricsHealthScoreCalculated, newAnswers!.Id);
 
             return new AnswerResponse();
         }
