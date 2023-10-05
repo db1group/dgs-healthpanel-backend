@@ -57,7 +57,8 @@ namespace Db1HealthPanelBack.Services
             if(costCenter is null) return new ErrorResponse("Cost Center Not Found");
 
             projectResult.Name = project.Name;
-
+            projectResult.CostCenter = costCenter;
+            
             if (project.LeadProjects is not null)
             {
                 projectResult.LeadProjects = projectResult.LeadProjects?
