@@ -48,9 +48,11 @@ public class StackService
         var listOfProjects = new List<ProjectStacksResponse>();
 
         var projects = await GetProjects(projectIds);
+        
         foreach (var project in projects)
         {
             var projectStacks = project.StackProjects?
+                .Where(x => x.Active)
                 .Select(s => new StackResponse(s.StackId!, s.Stack?.Name ?? string.Empty))
                 .ToList() ?? new List<StackResponse>();
 
@@ -64,6 +66,7 @@ public class StackService
     {
         var listOfStacks = new List<StackProjectsResponse>();
         var stacks = await GetStacksWithProject(languageIds);
+        
         foreach (var stack in stacks)
         {
             var projects = stack.StackProjects!
@@ -75,58 +78,31 @@ public class StackService
         return listOfStacks;
     }
 
-    public async Task<IActionResult> ConfirmStacks(Guid projectId, ProjectStackRequest request)
+    private async Task<List<Stack>> GetStacksWithProject(List<string>? languageIds)
     {
-        if (projectId != request.ProjectId) return new ErrorResponse("Project of route different from request");
-        
-        if (!request.StacksId!.Any()) return new ErrorResponse("The StacksId field is required");
+        var query = _contextConfig.StackProjects
+            .Where(x => x.Active)
+            .Select(x => x.Stack)
+            .DistinctBy(x => x.Id);
 
-        var stacks = await _contextConfig.StackProjects
-            .AsQueryable()
-            .Where(sp => sp.ProjectId == request.ProjectId)
-            .ToListAsync();
+        if (languageIds is not null && languageIds.Any())
+            query = query.Where(stack => languageIds.Contains(stack.Id));
 
-        
-        stacks.ForEach(stack => stack.Confirmed = request.StacksId!.Contains(stack.StackId!));
-        
-        if (stacks.Any(s => !s.Confirmed))
-            _contextConfig.RemoveRange(stacks.FindAll(s => !s.Confirmed));
-        
-        if (stacks.Any(s => s.Confirmed))
-            _contextConfig.UpdateRange(stacks.FindAll(s => s.Confirmed));
-        
-        await _contextConfig.SaveChangesAsync();
-        
-        return new ObjectResult(null) { StatusCode = (int) HttpStatusCode.NoContent };
+        return await query.ToListAsync();
     }
 
-    private async Task<List<Stack>> GetStacksWithProject(List<string>? languageIds)
-        => languageIds is not null && languageIds.Any()
-            ? await _contextConfig.Stacks.AsQueryable()
-                .Include(p => p.StackProjects)!
-                .ThenInclude(s => s.Project)
-                .Where(s => languageIds.Contains(s.Id!) &&
-                            _contextConfig.StackProjects.Any(sp => sp.StackId == s.Id))
-                .ToListAsync()
-            : await _contextConfig.Stacks.AsQueryable()
-                .Include(p => p.StackProjects)!
-                .ThenInclude(s => s.Project)
-                .Where(s => _contextConfig.StackProjects.Any(sp => sp.StackId == s.Id))
-                .ToListAsync();
-
     private async Task<List<Project>> GetProjects(List<Guid>? projectIds)
-        => projectIds is not null && projectIds.Any()
-            ? await _contextConfig.Projects
-                .AsQueryable()
-                .Include(p => p.StackProjects)!
-                .ThenInclude(s => s.Stack)
-                .Where(p => projectIds.Contains(p.Id))
-                .ToListAsync()
-            : await _contextConfig.Projects
-                .AsQueryable()
-                .Include(p => p.StackProjects)!
-                .ThenInclude(s => s.Stack)
-                .ToListAsync();
+    {
+        var query =  _contextConfig.Projects
+            .Include(p => p.StackProjects)!
+            .ThenInclude(s => s.Stack)
+            .AsQueryable();
+
+        if (projectIds is not null && projectIds.Any())
+            query = query.Where(p => projectIds.Contains(p.Id));
+
+        return await query.ToListAsync();
+    }
 
     private async Task PopulateStacks(Project project)
     {
@@ -146,11 +122,11 @@ public class StackService
         {
             if (project.StackProjects!.Any(ps => ps.StackId == stack)) continue;
 
-            var stackEntity = new StackProject()
+            var stackEntity = new StackProject
             {
                 ProjectId = project.Id,
                 StackId = stack,
-                Confirmed = false
+                Active = true
             };
             await _contextConfig.AddAsync(stackEntity);
         }
@@ -172,7 +148,7 @@ public class StackService
         {
             ProjectId = request.ProjectId,
             StackId = request.StackId,
-            Confirmed = false
+            Active = true
         };
         
         await _contextConfig.StackProjects.AddAsync(newStack);
