@@ -18,7 +18,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd db1-projects/health-panel-backend/;
+            cd db1-projects/dgs-healthpanel-backend/;
             docker container stop HealthPanel;
             docker rm HealthPanel;
             git pull origin main
