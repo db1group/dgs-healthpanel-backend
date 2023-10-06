@@ -48,9 +48,11 @@ public class StackService
         var listOfProjects = new List<ProjectStacksResponse>();
 
         var projects = await GetProjects(projectIds);
+        
         foreach (var project in projects)
         {
             var projectStacks = project.StackProjects?
+                .Where(x => x.Active)
                 .Select(s => new StackResponse(s.StackId!, s.Stack?.Name ?? string.Empty))
                 .ToList() ?? new List<StackResponse>();
 
@@ -77,23 +79,22 @@ public class StackService
 
     public async Task<IActionResult> ConfirmStacks(Guid projectId, ProjectStackRequest request)
     {
-        if (projectId != request.ProjectId) return new ErrorResponse("Project of route different from request");
+        if (projectId != request.ProjectId) return new ErrorResponse("Project in the route is different from the project in request");
         
-        if (!request.StacksId!.Any()) return new ErrorResponse("The StacksId field is required");
+        if (!request.StacksId!.Any()) return new ErrorResponse($"The {nameof(request.StacksId)} field is required");
 
         var stacks = await _contextConfig.StackProjects
             .AsQueryable()
             .Where(sp => sp.ProjectId == request.ProjectId)
             .ToListAsync();
-
         
         stacks.ForEach(stack => stack.Confirmed = request.StacksId!.Contains(stack.StackId!));
         
         if (stacks.Any(s => !s.Confirmed))
-            _contextConfig.RemoveRange(stacks.FindAll(s => !s.Confirmed));
+            stacks.FindAll(s => !s.Confirmed)
+                .ForEach(stack => stack.Active = false);
         
-        if (stacks.Any(s => s.Confirmed))
-            _contextConfig.UpdateRange(stacks.FindAll(s => s.Confirmed));
+        _contextConfig.UpdateRange(stacks);
         
         await _contextConfig.SaveChangesAsync();
         
@@ -115,18 +116,17 @@ public class StackService
                 .ToListAsync();
 
     private async Task<List<Project>> GetProjects(List<Guid>? projectIds)
-        => projectIds is not null && projectIds.Any()
-            ? await _contextConfig.Projects
-                .AsQueryable()
-                .Include(p => p.StackProjects)!
-                .ThenInclude(s => s.Stack)
-                .Where(p => projectIds.Contains(p.Id))
-                .ToListAsync()
-            : await _contextConfig.Projects
-                .AsQueryable()
-                .Include(p => p.StackProjects)!
-                .ThenInclude(s => s.Stack)
-                .ToListAsync();
+    {
+        var query =  _contextConfig.Projects
+            .Include(p => p.StackProjects)!
+            .ThenInclude(s => s.Stack)
+            .AsQueryable();
+
+        if (projectIds is not null && projectIds.Any())
+            query = query.Where(p => projectIds.Contains(p.Id));
+
+        return await query.ToListAsync();
+    }
 
     private async Task PopulateStacks(Project project)
     {
