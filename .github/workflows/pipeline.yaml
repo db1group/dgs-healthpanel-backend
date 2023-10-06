@@ -24,4 +24,4 @@ jobs:
             git pull origin main
             docker rmi health-panel;
             docker build -t health-panel .;
-            docker run -d -t -i -e ASPNETCORE_ENVIRONMENT=Production -p 5000:5000 --name HealthPanel health-panel;
+            docker run -d -t -i -e ASPNETCORE_ENVIRONMENT=Production -p 5000:5000 --net metrics-collector --name HealthPanel health-panel;
