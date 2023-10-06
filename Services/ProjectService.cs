@@ -1,3 +1,4 @@
+using System.Net;
 using Db1HealthPanelBack.Configs;
 using Db1HealthPanelBack.Entities;
 using Db1HealthPanelBack.Models.Requests;
@@ -107,6 +108,23 @@ namespace Db1HealthPanelBack.Services
             result.SetStatusCode(201);
 
             return result;
+        }
+
+        public async Task<IActionResult> RemoveStacksFromProject(ProjectStackRemovalRequest removalRequest)
+        {
+            var stacks = await _contextConfig.StackProjects
+                .Where(sp => sp.Active 
+                     && sp.ProjectId == removalRequest.Id
+                     && removalRequest.StacksId.Contains(sp.StackId))
+                .ToListAsync();
+
+            stacks.ForEach(stack => stack.Active = false);
+
+            _contextConfig.UpdateRange(stacks);
+
+            await _contextConfig.SaveChangesAsync();
+
+            return new ObjectResult(null) { StatusCode = (int) HttpStatusCode.NoContent };
         }
     }
 }

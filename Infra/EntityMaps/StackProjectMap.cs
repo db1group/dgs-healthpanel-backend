@@ -18,6 +18,9 @@ namespace Db1HealthPanelBack.Infra.EntityMaps
                 .Property(property => property.StackId)
                 .HasMaxLength(20);
 
+            builder.Property(property => property.Active)
+                .HasDefaultValue(true);
+
             builder.HasOne(x => x.Project)
                 .WithMany(x => x.StackProjects)
                 .HasForeignKey(x => x.ProjectId);
