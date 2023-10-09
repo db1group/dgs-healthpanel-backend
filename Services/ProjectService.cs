@@ -59,24 +59,36 @@ namespace Db1HealthPanelBack.Services
 
             projectResult.Name = project.Name;
             projectResult.CostCenter = costCenter;
+            projectResult.SonarName = project.SonarName;
+            projectResult.SonarToken = project.SonarToken;
+            projectResult.SonarUrl = project.SonarUrl;
             
-            if (project.LeadProjects is not null)
-            {
-                projectResult.LeadProjects = projectResult.LeadProjects?
-                                        .Where(ld => project.LeadProjects!.Any(lds => lds.ProjectId == ld.ProjectId))
-                                        .ToList();
-
-                var leadsToAdd = project.LeadProjects!
-                                        .Where(ld => !projectResult.LeadProjects!.Any(lds => lds.ProjectId == ld.ProjectId))
-                                                    .Adapt<List<LeadProject>>();
-                                                    
-                leadsToAdd.ForEach(pta => projectResult.LeadProjects!.Add(pta));
-            } else projectResult.LeadProjects = new List<LeadProject>();
+            AddLeadsToProject(project.LeadProjects, projectResult);
 
             _contextConfig.Update(projectResult);
             await _contextConfig.SaveChangesAsync();
 
             return projectResult.Adapt<ProjectResponse>();
+        }
+
+        private static void AddLeadsToProject(ICollection<LeadProjectRequest>? leadsProject, Project projectResult)
+        {
+            if (leadsProject is null)
+            {
+                projectResult.LeadProjects = new List<LeadProject>();
+                
+                return;
+            }
+            
+            projectResult.LeadProjects = projectResult.LeadProjects?
+                    .Where(ld => leadsProject!.Any(lds => lds.ProjectId == ld.ProjectId))
+                    .ToList();
+
+            var leadsToAdd = leadsProject!
+                .Where(ld => !projectResult.LeadProjects!.Any(lds => lds.ProjectId == ld.ProjectId))
+                .Adapt<List<LeadProject>>();
+
+            leadsToAdd.ForEach(pta => projectResult.LeadProjects!.Add(pta));
         }
 
         public async Task<IActionResult> DeleteProject(Guid id)
@@ -91,13 +103,15 @@ namespace Db1HealthPanelBack.Services
             return new ObjectResult(null) { StatusCode = 204 };
         }
 
-        public async Task<IActionResult> CreateProject(ProjectRequest project)
+        public async Task<IActionResult> CreateProject(ProjectRequest createProject)
         {
-            var costCenter = await _contextConfig.CostCenters.FirstAsync(prop => prop.Id == project.CostCenter!.Id);
+            var costCenter = await _contextConfig.CostCenters
+                .FirstOrDefaultAsync(prop => prop.Id == createProject.CostCenter.Id);
 
-            if(costCenter is null) return new ErrorResponse("Cost Center Not Found");
+            if(costCenter is null) 
+                return new ErrorResponse("Cost Center Not Found");
             
-            var projectEntity = project.Adapt<Project>();
+            var projectEntity = createProject.Adapt<Project>();
             projectEntity.CostCenter = costCenter;
 
             await _contextConfig.AddAsync(projectEntity);

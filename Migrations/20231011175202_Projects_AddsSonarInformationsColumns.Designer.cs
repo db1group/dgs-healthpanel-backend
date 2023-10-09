@@ -3,6 +3,7 @@ using System;
 using Db1HealthPanelBack.Configs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Db1HealthPanelBack.Migrations
 {
     [DbContext(typeof(ContextConfig))]
-    partial class ContextConfigModelSnapshot : ModelSnapshot
+    [Migration("20231011175202_Projects_AddsSonarInformationsColumns")]
+    partial class Projects_AddsSonarInformationsColumns
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -288,35 +291,6 @@ namespace Db1HealthPanelBack.Migrations
                     b.ToTable("Projects");
                 });
 
-            modelBuilder.Entity("Db1HealthPanelBack.Entities.ProjectResponder", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<bool>("IsLead")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProjectId");
-
-                    b.ToTable("ProjectResponders");
-                });
-
             modelBuilder.Entity("Db1HealthPanelBack.Entities.QualityGate", b =>
                 {
                     b.Property<Guid>("Id")
@@ -531,17 +505,6 @@ namespace Db1HealthPanelBack.Migrations
                     b.Navigation("CostCenter");
                 });
 
-            modelBuilder.Entity("Db1HealthPanelBack.Entities.ProjectResponder", b =>
-                {
-                    b.HasOne("Db1HealthPanelBack.Entities.Project", "Project")
-                        .WithMany("ProjectResponders")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Project");
-                });
-
             modelBuilder.Entity("Db1HealthPanelBack.Entities.Question", b =>
                 {
                     b.HasOne("Db1HealthPanelBack.Entities.Column", null)
@@ -607,8 +570,6 @@ namespace Db1HealthPanelBack.Migrations
                     b.Navigation("Evaluations");
 
                     b.Navigation("LeadProjects");
-
-                    b.Navigation("ProjectResponders");
 
                     b.Navigation("StackProjects");
                 });
