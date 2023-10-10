@@ -36,9 +36,8 @@ namespace Db1HealthPanelBack.Controllers
         public async Task<IActionResult> Create([FromBody] ProjectRequest project)
             => await _projectService.CreateProject(project);
         
-        [HttpDelete("stacks")]
-        public async Task<IActionResult> RemoveStacksFromProject([FromBody] ProjectStackRemovalRequest removalRequest)
-            => await _projectService.RemoveStacksFromProject(removalRequest);
-
+        [HttpPut("{id:guid}/disable-stacks")]
+        public async Task<IActionResult> DisableProjectStacks([FromRoute] Guid id, [FromBody] ProjectStackRemovalRequest removalRequest)
+            => await _projectService.DisableProjectStacks(id, removalRequest);
     }
 }
