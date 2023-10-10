@@ -34,12 +34,6 @@ public class StackController : ControllerBase
     [HttpGet("languages")]
     public async Task<IEnumerable<StackProjectsResponse>> GetByLanguage([FromQuery] List<string>? languageId)
         => await _stackService.GetStacks(languageId);
-
-    [HttpPut("project/{projectId:guid}/confirm-stacks")]
-    public async Task<IActionResult> ConfirmStacks(
-        [FromRoute] Guid projectId,
-        [FromBody] ProjectStackRequest request)
-        => await _stackService.ConfirmStacks(projectId, request);
     
     [HttpPost("add/stack")]
     public async Task<IActionResult> AddStacks(
