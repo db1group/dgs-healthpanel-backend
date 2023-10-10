@@ -40,10 +40,10 @@ public class StackService
     public async Task<List<StackResponse>> GetAll()
         => await _contextConfig.Stacks
             .AsQueryable()
-            .Select(s => new StackResponse(s.Id!, s.Name!))
+            .Select(s => new StackResponse(s.Id!, s.Name!, true))
             .ToListAsync();
 
-    public async Task<List<ProjectStacksResponse>> GetStacks(List<Guid>? projectIds)
+    public async Task<List<ProjectStacksResponse>> GetStacks(List<Guid>? projectIds, bool listOnlyActive)
     {
         var listOfProjects = new List<ProjectStacksResponse>();
 
@@ -52,8 +52,8 @@ public class StackService
         foreach (var project in projects)
         {
             var projectStacks = project.StackProjects?
-                .Where(x => x.Active)
-                .Select(s => new StackResponse(s.StackId!, s.Stack?.Name ?? string.Empty))
+                .Where(sp => !listOnlyActive || sp.Active)
+                .Select(s => new StackResponse(s.StackId!, s.Stack?.Name ?? string.Empty, s.Active))
                 .ToList() ?? new List<StackResponse>();
 
             listOfProjects.Add(new ProjectStacksResponse(project.Id, project.Name ?? string.Empty, projectStacks));
@@ -62,7 +62,7 @@ public class StackService
         return listOfProjects;
     }
 
-    public async Task<List<StackProjectsResponse>> GetStacks(List<string>? languageIds)
+    public async Task<List<StackProjectsResponse>> GetStacks(List<string>? languageIds, bool listOnlyActive)
     {
         var listOfStacks = new List<StackProjectsResponse>();
         var stacks = await GetStacksWithProject(languageIds);
@@ -70,7 +70,8 @@ public class StackService
         foreach (var stack in stacks)
         {
             var projects = stack.StackProjects!
-                .Select(s => new ProjectStackResponse(s.Project!.Id, s.Project!.Name ?? string.Empty))
+                .Where(sp => !listOnlyActive || sp.Active)
+                .Select(s => new ProjectStackResponse(s.Project!.Id, s.Project!.Name ?? string.Empty, s.Active))
                 .ToList();
             listOfStacks.Add(new StackProjectsResponse(stack.Id!, stack.Name!, projects));
         }
@@ -80,15 +81,11 @@ public class StackService
 
     private async Task<List<Stack>> GetStacksWithProject(List<string>? languageIds)
     {
-        var query = _contextConfig.StackProjects
-            .Where(x => x.Active)
-            .Select(x => x.Stack)
-            .DistinctBy(x => x.Id);
-
-        if (languageIds is not null && languageIds.Any())
-            query = query.Where(stack => languageIds.Contains(stack.Id));
-
-        return await query.ToListAsync();
+        return await _contextConfig.Stacks
+            .Include(s => s.StackProjects)!
+            .ThenInclude(sp => sp.Project)
+            .Where(s => (languageIds == null || !languageIds.Any()) || languageIds.Contains(s.Id!))
+            .ToListAsync();
     }
 
     private async Task<List<Project>> GetProjects(List<Guid>? projectIds)

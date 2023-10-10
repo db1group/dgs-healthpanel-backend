@@ -18,10 +18,12 @@ public class ProjectStackResponse
 {
     public Guid ProjectId { get; set; }
     public string ProjectName { get; set; }
+    public bool Active { get; set; }
 
-    public ProjectStackResponse(Guid projectId, string projectName)
+    public ProjectStackResponse(Guid projectId, string projectName, bool active)
     {
         ProjectId = projectId;
         ProjectName = projectName;
+        Active = active;
     }
 }

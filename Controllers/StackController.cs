@@ -28,12 +28,16 @@ public class StackController : ControllerBase
         => await _stackService.GetAll();
 
     [HttpGet("projects")]
-    public async Task<IEnumerable<ProjectStacksResponse>> GetByProject([FromQuery] List<Guid>? projectId)
-        => await _stackService.GetStacks(projectId);
+    public async Task<IEnumerable<ProjectStacksResponse>> GetByProject(
+        [FromQuery] List<Guid>? projectId,
+        [FromQuery] bool listOnlyActive = true)
+        => await _stackService.GetStacks(projectId, listOnlyActive);
 
     [HttpGet("languages")]
-    public async Task<IEnumerable<StackProjectsResponse>> GetByLanguage([FromQuery] List<string>? languageId)
-        => await _stackService.GetStacks(languageId);
+    public async Task<IEnumerable<StackProjectsResponse>> GetByLanguage(
+        [FromQuery] List<string>? languageId,
+        [FromQuery] bool listOnlyActive = true)
+        => await _stackService.GetStacks(languageId, listOnlyActive);
     
     [HttpPost("add/stack")]
     public async Task<IActionResult> AddStacks(
