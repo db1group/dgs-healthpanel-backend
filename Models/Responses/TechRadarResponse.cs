@@ -5,7 +5,5 @@
         public string? Ring { get; set; }
 
         public string? Title { get; set; }
-
-        public bool IsPresent { get; set; }
     }
 }
