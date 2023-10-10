@@ -3,15 +3,10 @@
 public class AdherenceResponse
 {
     public string AdoptPercentage { get; set; }
-
     public string AvoidPercentage { get; set; }
-
     public string AssessPercentage { get; set; }
-
     public string ExperimentPercentage { get; set; }
-
     public string UnspecifiedPercentage { get; set; }
-
 
     public AdherenceResponse(
         string adoptPercentage,

@@ -75,6 +75,5 @@ namespace Db1HealthPanelBack.Services
 
             return (ringCount / totalStacks).ToString("#0.##%");
         }
-
     }
 }
