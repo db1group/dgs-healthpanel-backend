@@ -6,17 +6,18 @@ namespace Db1HealthPanelBack.Services
 {
     public class TechRadarService
     {
-
         public List<ProjectTechRadarResponse> GetTechComparisons(List<ProjectStacksResponse> stackData, string techRadar)
         {
             var originalTechRadarData = JsonConvert.DeserializeObject<TechRadarRequest>(techRadar);
             List<ProjectTechRadarResponse> projectTechRadarResponses = new List<ProjectTechRadarResponse>();
             foreach (var project in stackData)
             {
+                var response = CompareTechs(originalTechRadarData, project);
                 var projectTechRadarResponse = new ProjectTechRadarResponse
                 {
                     ProjectId = project.ProjectId,
-                    TechRadarResponses = CompareTechs(originalTechRadarData, project)
+                    TechRadarResponses = response,
+                    AdherenceResponse = CalculateAdherence(response)
                 };
                 projectTechRadarResponses.Add(projectTechRadarResponse);
             }
@@ -27,24 +28,45 @@ namespace Db1HealthPanelBack.Services
         private List<TechRadarResponse> CompareTechs(TechRadarRequest techRadarData, ProjectStacksResponse projectStackData)
         {
             var radarStack = techRadarData.Items!;
+
             var projectStack = projectStackData.Stacks;
-            var upperCaseProjectStackNames = projectStack.Select(element => element.StackName.ToUpper()).ToList();
-            List<TechRadarResponse> comparisons = new List<TechRadarResponse>();
-            foreach (var tech in radarStack)
-            {
-                var comparison = new TechRadarResponse
+
+            return projectStack
+                .Select(e => new TechRadarResponse()
                 {
-                    Ring = tech.Ring,
-                    Title = tech.Title,
-                    IsPresent = upperCaseProjectStackNames.Contains(tech.Name!.ToUpper())
-                };
-                
-                comparisons.Add(comparison);
-            }
-
-            return comparisons;
-
-
+                    Ring = radarStack.FirstOrDefault(r => r.Name!.ToLower() == e.StackId.ToLower())?.Ring ?? null,
+                    Title = e.StackName
+                })
+                .ToList();
         }
+
+        private AdherenceResponse CalculateAdherence(List<TechRadarResponse> techRadarResponse)
+        {
+            var adopt = CalculateByRing(techRadarResponse, Ring.Adopt);
+            var avoid = CalculateByRing(techRadarResponse, Ring.Avoid);
+            var assess = CalculateByRing(techRadarResponse, Ring.Assess);
+            var experiment = CalculateByRing(techRadarResponse, Ring.Experiment);
+            var unspecified = CalculateByRing(techRadarResponse, null);
+
+            return new AdherenceResponse(
+                adopt,
+                avoid,
+                assess,
+                experiment,
+                unspecified);
+        }
+
+        private string CalculateByRing(List<TechRadarResponse> techRadarResponse,Ring? ring)
+        {
+            var totalStacks = Convert.ToDecimal(techRadarResponse.Count);
+
+            var ringCount = techRadarResponse
+                .Count(e => ring.HasValue ?
+                    e.Ring?.Equals(ring.ToString(), StringComparison.OrdinalIgnoreCase) ?? false :
+                    e.Ring is null);
+
+            return (ringCount / totalStacks).ToString("#0.##%");
+        }
+
     }
 }
