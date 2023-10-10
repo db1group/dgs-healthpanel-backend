@@ -26,7 +26,7 @@ namespace Db1HealthPanelBack.Controllers
             HttpResponseMessage response = await _httpClient.GetAsync("https://techradar.db1.com.br/db1-opinion.json");
             if (!response.IsSuccessStatusCode) return StatusCode((int)response.StatusCode);
             
-            var stackData = await _stackService.GetStacks(projectIds);
+            var stackData = await _stackService.GetStacks(projectIds: projectIds, listOnlyActive: true);
             string techRadarContent = await response.Content.ReadAsStringAsync();
 
             var techComparison = _techRadarService.GetTechComparisons(stackData, techRadarContent);
