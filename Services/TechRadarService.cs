@@ -34,10 +34,18 @@ namespace Db1HealthPanelBack.Services
             return projectStack
                 .Select(e => new TechRadarResponse()
                 {
-                    Ring = radarStack.FirstOrDefault(r => r.Name!.ToLower() == e.StackId.ToLower())?.Ring ?? null,
+                    Ring = radarStack.FirstOrDefault(r => CompareName(e, r))?.Ring ?? null,
                     Title = e.StackName
                 })
                 .ToList();
+        }
+
+        private bool CompareName(StackResponse e, ProjectTechRadarRequest r)
+        {
+            var equalsByName = string.Equals(r.Name!, e.StackId, StringComparison.CurrentCultureIgnoreCase);
+            var equalsByTitle = string.Equals(r.Title!, e.StackName, StringComparison.CurrentCultureIgnoreCase);
+
+            return equalsByName || equalsByTitle;
         }
 
         private AdherenceResponse CalculateAdherence(List<TechRadarResponse> techRadarResponse)
