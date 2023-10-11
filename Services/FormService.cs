@@ -118,12 +118,9 @@ namespace Db1HealthPanelBack.Services
                 {
                     PillarId = p ?? Guid.NewGuid(),
                     AdditionalData = request.Pillars?.First(rp => rp.PillarId == p).AdditionalData
-                }).ToList()
+                }).ToList(),
+                UserId = await GetUserId(project.Id)
             };
-
-            var lead = await _contextConfig.Leads.FirstOrDefaultAsync(prop => prop.Email == _currentUserService.UserName);
-
-            if (lead is not null) newAnswers.UserId = lead?.Id ?? Guid.NewGuid();
 
             await _contextConfig.AddRangeAsync(newAnswers);
             await _contextConfig.SaveChangesAsync();
@@ -134,6 +131,15 @@ namespace Db1HealthPanelBack.Services
                 processScoreCalculated.Sum(prop => prop.Score), metricsHealthScoreCalculated, newAnswers!.Id);
 
             return new AnswerResponse();
+        }
+
+        private async Task<Guid> GetUserId(Guid projectId)
+        {
+            var responder =
+                await _contextConfig.ProjectResponders
+                    .FirstOrDefaultAsync(prop => prop.Email == _currentUserService.UserName && 
+                                                 prop.ProjectId == projectId);
+            return responder?.Id ?? Guid.Empty;
         }
     }
 }
