@@ -13,5 +13,6 @@ namespace Db1HealthPanelBack.Entities
         public DateTime? CreatedAt { get; set; } = DateTime.Now;
         public ICollection<StackProject>? StackProjects { get; set; }
         public string? MetricsCollectorProjectName { get; set; }
+        public ICollection<ProjectResponder>? ProjectResponders { get; set; }
     }
 }

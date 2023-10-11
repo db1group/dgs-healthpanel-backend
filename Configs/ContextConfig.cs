@@ -22,6 +22,7 @@ namespace Db1HealthPanelBack.Configs
         public required DbSet<SonarReadingDetail> SonarReadingDetails { get; set; }
         public required DbSet<Stack> Stacks { get; set; }
         public required DbSet<StackProject> StackProjects { get; set; }
+        public required DbSet<ProjectResponder> ProjectResponders { get; set; }
 
         public ContextConfig(DbContextOptions options) : base(options) {}
 
@@ -42,6 +43,7 @@ namespace Db1HealthPanelBack.Configs
             modelBuilder.ApplyConfiguration(new SonarMetricMap());
             modelBuilder.ApplyConfiguration(new StackMap());
             modelBuilder.ApplyConfiguration(new StackProjectMap());
+            modelBuilder.ApplyConfiguration(new ProjectResponderMap());
         }
 
         public Task<string[]> GetAllSonarMetricKeys() => Set<SonarMetric>().AsNoTracking().Select(prop => prop.Key).ToArrayAsync()!;
