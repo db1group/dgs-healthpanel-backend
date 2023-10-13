@@ -110,11 +110,11 @@ namespace Db1HealthPanelBack.Services
             return result;
         }
 
-        public async Task<IActionResult> RemoveStacksFromProject(ProjectStackRemovalRequest removalRequest)
+        public async Task<IActionResult> DisableProjectStacks(Guid id, ProjectStackRemovalRequest removalRequest)
         {
             var stacks = await _contextConfig.StackProjects
                 .Where(sp => sp.Active 
-                     && sp.ProjectId == removalRequest.Id
+                     && sp.ProjectId == id
                      && removalRequest.StacksId.Contains(sp.StackId))
                 .ToListAsync();
 
