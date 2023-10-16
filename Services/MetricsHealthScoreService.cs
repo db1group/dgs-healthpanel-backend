@@ -14,7 +14,7 @@ namespace Db1HealthPanelBack.Services
 
         public async Task<decimal> GetMetricsHealthScore(Project project)
         {
-            if (project.MetricsCollectorProjectName.IsNullOrEmpty())
+            if (project.SonarName.IsNullOrEmpty())
                 return 0;
 
             var urlRequest = await DefineProjectUrlRequest(project);
@@ -44,7 +44,7 @@ namespace Db1HealthPanelBack.Services
         {
             var url = _configuration["SonarMetricsHealthScore:url"];
             const string endpoint = "projectKeyName";
-            return Task.FromResult($"{url}/?{endpoint}={project.MetricsCollectorProjectName}");
+            return Task.FromResult($"{url}/?{endpoint}={project.SonarName}");
         }
 
         internal class HealthScore
