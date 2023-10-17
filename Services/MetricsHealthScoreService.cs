@@ -44,7 +44,7 @@ namespace Db1HealthPanelBack.Services
         {
             var url = _configuration["SonarMetricsHealthScore:url"];
             const string endpoint = "projectKeyName";
-            return Task.FromResult($"{url}/?{endpoint}={project.SonarName}");
+            return Task.FromResult($"{url}/?{endpoint}={project.SonarName}&sonarUserToken={project.SonarToken}&sonarUrl={project.SonarUrl}");
         }
 
         internal class HealthScore
