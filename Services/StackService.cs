@@ -139,18 +139,31 @@ public class StackService
             .Where(sp => sp.ProjectId == request.ProjectId)
             .FirstOrDefaultAsync(proj => proj.StackId == request.StackId);
         
-        if (stacks is not null) return new ErrorResponse("Stack already exists");
-        
-        var newStack = new StackProject()
-        {
-            ProjectId = request.ProjectId,
-            StackId = request.StackId,
-            Active = true
-        };
-        
-        await _contextConfig.StackProjects.AddAsync(newStack);
-        await _contextConfig.SaveChangesAsync();
+        if (stacks is not null && stacks.Active) return new ErrorResponse("Stack already exists");
+
+        await AddStack(request, stacks);
         
         return new ObjectResult(null) { StatusCode = (int) HttpStatusCode.NoContent };
+    }
+
+    private async Task AddStack(AddStackRequest request, StackProject stack)
+    {
+        if (stack is null)
+        {
+            var newStack = new StackProject
+            {
+                ProjectId = request.ProjectId,
+                StackId = request.StackId,
+                Active = true
+            };
+
+            await _contextConfig.AddAsync(newStack);
+        } else
+        {
+            stack.Active = true;
+            _contextConfig.Update(stack);
+        }
+
+        await _contextConfig.SaveChangesAsync();
     }
 }
