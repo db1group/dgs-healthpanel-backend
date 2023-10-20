@@ -37,7 +37,7 @@ namespace Db1HealthPanelBack.Services
                 return 0;
 
             healthScore = await response.Content.ReadAsAsync<HealthScore>();
-            return healthScore is not null ? healthScore.Value.Value : 0;
+            return healthScore is not null ? healthScore.Value!.Value : 0;
         }
 
         private Task<string> DefineProjectUrlRequest(Project project)

@@ -12,8 +12,8 @@ namespace Db1HealthPanelBack.Entities
         public CostCenter? CostCenter {get;set;}
         public DateTime? CreatedAt { get; set; } = DateTime.Now;
         public string? SonarName { get; set; }
-        public string SonarUrl { get; set; }
-        public string SonarToken { get; set; }
+        public string? SonarUrl { get; set; }
+        public string? SonarToken { get; set; }
         public ICollection<StackProject>? StackProjects { get; set; }
         public ICollection<ProjectResponder>? ProjectResponders { get; set; }
     }

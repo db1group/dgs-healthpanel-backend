@@ -12,7 +12,7 @@ namespace Db1HealthPanelBack.Services
             List<ProjectTechRadarResponse> projectTechRadarResponses = new List<ProjectTechRadarResponse>();
             foreach (var project in stackData)
             {
-                var response = CompareTechs(originalTechRadarData, project);
+                var response = CompareTechs(originalTechRadarData!, project);
                 var projectTechRadarResponse = new ProjectTechRadarResponse
                 {
                     ProjectId = project.ProjectId,

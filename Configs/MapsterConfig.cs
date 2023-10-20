@@ -23,8 +23,13 @@ namespace Db1HealthPanelBack.Configs
 
             TypeAdapterConfig<LeadProjectResponse, LeadProject>
                 .NewConfig()
-                .TwoWays()
                 .PreserveReference(true);
+
+            TypeAdapterConfig<LeadProject, LeadProjectResponse>
+                .NewConfig()
+                .PreserveReference(true)
+                .Map(target => target.ProjectName, intent => intent.Project!.Name)
+                .Map(target => target.LeadName, intent => intent.Lead!.Name);
 
             TypeAdapterConfig<Evaluation, EvaluationResponse>
                 .NewConfig()

@@ -106,7 +106,7 @@ namespace Db1HealthPanelBack.Services
         public async Task<IActionResult> CreateProject(ProjectRequest createProject)
         {
             var costCenter = await _contextConfig.CostCenters
-                .FirstOrDefaultAsync(prop => prop.Id == createProject.CostCenter.Id);
+                .FirstOrDefaultAsync(prop => prop.Id == createProject.CostCenter!.Id);
 
             if(costCenter is null) 
                 return new ErrorResponse("Cost Center Not Found");
@@ -129,7 +129,7 @@ namespace Db1HealthPanelBack.Services
             var stacks = await _contextConfig.StackProjects
                 .Where(sp => sp.Active 
                      && sp.ProjectId == id
-                     && removalRequest.StacksId.Contains(sp.StackId))
+                     && removalRequest.StacksId!.Contains(sp.StackId!))
                 .ToListAsync();
 
             stacks.ForEach(stack => stack.Active = false);
