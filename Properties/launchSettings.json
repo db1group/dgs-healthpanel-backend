@@ -1,4 +1,33 @@
-﻿{
+{
+  "profiles": {
+    "Db1HealthPanelBack": {
+      "commandName": "Project",
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "https://localhost:7101;http://localhost:5019"
+    },
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "WSL: Ubuntu": {
+      "commandName": "WSL",
+      "launchUrl": "http://localhost:5000/doc/",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:5000"
+      },
+      "distributionName": "Ubuntu-22.04",
+      "workingDirectory": "/home/erick/projects/db1-group/db1-healthpanel/dgs-healthpanel-backend",
+      "commandLineArgs": "bin/Debug/net7.0/db1-healthpanel-back.dll"
+    }
+  },
   "$schema": "https://json.schemastore.org/launchsettings.json",
   "iisSettings": {
     "windowsAuthentication": false,
@@ -6,26 +35,6 @@
     "iisExpress": {
       "applicationUrl": "http://localhost:56740",
       "sslPort": 44308
-    }
-  },
-  "profiles": {
-    "Db1HealthPanelBack": {
-      "commandName": "Project",
-      "dotnetRunMessages": true,
-      "launchBrowser": false,
-      "launchUrl": "swagger",
-      "applicationUrl": "https://localhost:7101;http://localhost:5019",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
-    "IIS Express": {
-      "commandName": "IISExpress",
-      "launchBrowser": false,
-      "launchUrl": "swagger",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
     }
   }
 }

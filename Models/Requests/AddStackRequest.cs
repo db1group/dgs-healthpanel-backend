@@ -3,5 +3,5 @@
 public class AddStackRequest
 {
     public Guid ProjectId { get; set; }
-    public string StackId { get; set; }
+    public string? StackId { get; set; }
 }

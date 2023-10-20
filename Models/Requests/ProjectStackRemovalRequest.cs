@@ -6,5 +6,5 @@ public class ProjectStackRemovalRequest
 {
     [Required]
     [MinLength(1)]
-    public ICollection<string> StacksId { get; set; }
+    public ICollection<string>? StacksId { get; set; }
 }

@@ -141,7 +141,7 @@ public class StackService
         
         if (stacks is not null && stacks.Active) return new ErrorResponse("Stack already exists");
 
-        await AddStack(request, stacks);
+        await AddStack(request, stacks!);
         
         return new ObjectResult(null) { StatusCode = (int) HttpStatusCode.NoContent };
     }

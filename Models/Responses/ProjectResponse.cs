@@ -7,9 +7,9 @@ namespace Db1HealthPanelBack.Models.Responses
         private int StatusCode { get; set; } = 200;
         public Guid Id { get; set; }
         public string? Name { get; set; }
-        public string SonarName { get; set; }
-        public string SonarUrl { get; set; }
-        public string SonarToken { get; set; }
+        public string? SonarName { get; set; }
+        public string? SonarUrl { get; set; }
+        public string? SonarToken { get; set; }
         public ICollection<LeadProjectResponse>? LeadProjects { get; set; }
         public CostCenterResponse? CostCenter { get; set; }
 
