@@ -48,7 +48,7 @@ namespace Db1HealthPanelBack.Services
 
             if (project is null) return new ErrorResponse("Project Not Found");
 
-            project.SonarToken = "";
+            project.SonarToken = string.Empty;
 
             return project.Adapt<ProjectResponse>();
         }
