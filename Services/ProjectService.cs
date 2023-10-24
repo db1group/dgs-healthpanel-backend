@@ -7,6 +7,7 @@ using Db1HealthPanelBack.Models.Responses.Errors;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Db1HealthPanelBack.Services
 {
@@ -29,6 +30,11 @@ namespace Db1HealthPanelBack.Services
                             .OrderBy(pro => pro.Name)
                             .ToListAsync();
 
+            foreach (var project in projects)
+            {
+                project.SonarToken = "";
+            }
+
             return projects.Adapt<ICollection<ProjectResponse>>();
         }
         public async Task<IActionResult> FindProject(Guid id)
@@ -41,6 +47,8 @@ namespace Db1HealthPanelBack.Services
                             .FirstOrDefaultAsync(property => property.Id == id);
 
             if (project is null) return new ErrorResponse("Project Not Found");
+
+            project.SonarToken = string.Empty;
 
             return project.Adapt<ProjectResponse>();
         }
@@ -55,14 +63,18 @@ namespace Db1HealthPanelBack.Services
 
             var costCenter = await _contextConfig.CostCenters.FirstAsync(prop => prop.Id == project.CostCenter!.Id);
 
-            if(costCenter is null) return new ErrorResponse("Cost Center Not Found");
+            if (costCenter is null) return new ErrorResponse("Cost Center Not Found");
 
             projectResult.Name = project.Name;
             projectResult.CostCenter = costCenter;
             projectResult.SonarName = project.SonarName;
-            projectResult.SonarToken = project.SonarToken;
             projectResult.SonarUrl = project.SonarUrl;
-            
+
+            if (!project.SonarToken.IsNullOrEmpty())
+            {
+                projectResult.SonarToken = project.SonarToken;
+            }
+
             AddLeadsToProject(project.LeadProjects, projectResult);
 
             _contextConfig.Update(projectResult);
@@ -76,10 +88,10 @@ namespace Db1HealthPanelBack.Services
             if (leadsProject is null)
             {
                 projectResult.LeadProjects = new List<LeadProject>();
-                
+
                 return;
             }
-            
+
             projectResult.LeadProjects = projectResult.LeadProjects?
                     .Where(ld => leadsProject!.Any(lds => lds.ProjectId == ld.ProjectId))
                     .ToList();
@@ -108,9 +120,9 @@ namespace Db1HealthPanelBack.Services
             var costCenter = await _contextConfig.CostCenters
                 .FirstOrDefaultAsync(prop => prop.Id == createProject.CostCenter!.Id);
 
-            if(costCenter is null) 
+            if (costCenter is null)
                 return new ErrorResponse("Cost Center Not Found");
-            
+
             var projectEntity = createProject.Adapt<Project>();
             projectEntity.CostCenter = costCenter;
 
@@ -127,7 +139,7 @@ namespace Db1HealthPanelBack.Services
         public async Task<IActionResult> DisableProjectStacks(Guid id, ProjectStackRemovalRequest removalRequest)
         {
             var stacks = await _contextConfig.StackProjects
-                .Where(sp => sp.Active 
+                .Where(sp => sp.Active
                      && sp.ProjectId == id
                      && removalRequest.StacksId!.Contains(sp.StackId!))
                 .ToListAsync();
@@ -138,7 +150,7 @@ namespace Db1HealthPanelBack.Services
 
             await _contextConfig.SaveChangesAsync();
 
-            return new ObjectResult(null) { StatusCode = (int) HttpStatusCode.NoContent };
+            return new ObjectResult(null) { StatusCode = (int)HttpStatusCode.NoContent };
         }
     }
 }
