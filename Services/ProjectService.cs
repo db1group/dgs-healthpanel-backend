@@ -80,6 +80,8 @@ namespace Db1HealthPanelBack.Services
             _contextConfig.Update(projectResult);
             await _contextConfig.SaveChangesAsync();
 
+            projectResult.SonarToken = string.Empty;
+
             return projectResult.Adapt<ProjectResponse>();
         }
 
