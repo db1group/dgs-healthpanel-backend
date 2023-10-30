@@ -103,7 +103,7 @@ public class StackService
 
     private async Task PopulateStacks(Project project)
     {
-        var projectKeys = await _sonarHttpService.GetSonarProjectNames(project.Name ?? string.Empty);
+        var projectKeys = await _sonarHttpService.GetSonarProjectNames(project.SonarName ?? string.Empty);
         if (!projectKeys.Any()) return;
 
         var listOfStacks = new List<string>();
