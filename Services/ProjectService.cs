@@ -65,6 +65,15 @@ namespace Db1HealthPanelBack.Services
 
             if (costCenter is null) return new ErrorResponse("Cost Center Not Found");
 
+            var isDuplicate = _contextConfig.Projects.Where(proj => proj.Name == project.Name).Any();
+
+            if (isDuplicate)
+            {
+                var resultError = projectResult.Adapt<ProjectResponse>();
+                resultError.SetStatusCode(409);
+                return resultError;
+            }
+
             projectResult.Name = project.Name;
             projectResult.CostCenter = costCenter;
             projectResult.SonarName = project.SonarName;
@@ -125,6 +134,15 @@ namespace Db1HealthPanelBack.Services
 
             var projectEntity = createProject.Adapt<Project>();
             projectEntity.CostCenter = costCenter;
+
+            var isDuplicate = _contextConfig.Projects.Where(project => project.Name == createProject.Name).Any();
+
+            if (isDuplicate)
+            {
+                var resultError = projectEntity.Adapt<ProjectResponse>();
+                resultError.SetStatusCode(409);
+                return resultError;
+            }
 
             await _contextConfig.AddAsync(projectEntity);
             await _contextConfig.SaveChangesAsync();
