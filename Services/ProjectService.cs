@@ -67,7 +67,7 @@ namespace Db1HealthPanelBack.Services
 
             var isDuplicate = _contextConfig.Projects.Where(proj => proj.Name == project.Name).Any();
 
-            if (isDuplicate)
+            if (project.Name != projectResult.Name && isDuplicate)
             {
                 var resultError = projectResult.Adapt<ProjectResponse>();
                 resultError.SetStatusCode(409);
