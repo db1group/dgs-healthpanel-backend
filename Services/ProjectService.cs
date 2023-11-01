@@ -78,6 +78,7 @@ namespace Db1HealthPanelBack.Services
             projectResult.CostCenter = costCenter;
             projectResult.SonarName = project.SonarName;
             projectResult.SonarUrl = project.SonarUrl;
+            projectResult.SonarProjectKeys = project.SonarProjectKeys;
 
             if (!project.SonarToken.IsNullOrEmpty())
             {

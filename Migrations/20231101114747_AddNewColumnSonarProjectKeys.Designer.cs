@@ -3,6 +3,7 @@ using System;
 using Db1HealthPanelBack.Configs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Db1HealthPanelBack.Migrations
 {
     [DbContext(typeof(ContextConfig))]
-    partial class ContextConfigModelSnapshot : ModelSnapshot
+    [Migration("20231101114747_AddNewColumnSonarProjectKeys")]
+    partial class AddNewColumnSonarProjectKeys
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -271,9 +274,11 @@ namespace Db1HealthPanelBack.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("SonarName")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("SonarProjectKeys")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("SonarToken")

@@ -10,6 +10,7 @@ namespace Db1HealthPanelBack.Models.Responses
         public string? SonarName { get; set; }
         public string? SonarUrl { get; set; }
         public string? SonarToken { get; set; }
+        public string? SonarProjectKeys { get; set; }
         public ICollection<LeadProjectResponse>? LeadProjects { get; set; }
         public CostCenterResponse? CostCenter { get; set; }
 

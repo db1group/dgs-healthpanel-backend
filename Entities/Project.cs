@@ -8,12 +8,13 @@ namespace Db1HealthPanelBack.Entities
         public ICollection<Evaluation>? Evaluations { get; set; }
         public uint? QuantityDevs { get; set; }
         public string? AdditionalData { get; set; }
-        public Guid CostCenterId {get;set;}
-        public CostCenter? CostCenter {get;set;}
+        public Guid CostCenterId { get; set; }
+        public CostCenter? CostCenter { get; set; }
         public DateTime? CreatedAt { get; set; } = DateTime.Now;
         public string? SonarName { get; set; }
         public string? SonarUrl { get; set; }
         public string? SonarToken { get; set; }
+        public string? SonarProjectKeys { get; set; }
         public ICollection<StackProject>? StackProjects { get; set; }
         public ICollection<ProjectResponder>? ProjectResponders { get; set; }
     }
