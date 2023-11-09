@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using Db1HealthPanelBack.Configs;
 using Db1HealthPanelBack.Configs.Middlewares;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,7 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDatabase(builder.Configuration);
+builder.Services.AddIdentity(builder.Configuration);
 builder.Services.AddMapster();
 builder.Services.AddDomainServices();
 builder.Services.AddCompressionToResponse();
