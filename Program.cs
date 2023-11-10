@@ -39,22 +39,7 @@ builder.Services.AddSwaggerGen(configuration =>
 });
 builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddIdentity(builder.Configuration);
-builder.Services.AddAuthentication("JwtBearer").AddJwtBearer("JwtBearer", options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidIssuer = builder.Configuration["JwtOptions:Issuer"],
-
-            ValidateAudience = true,
-            ValidAudience = builder.Configuration["JwtOptions:Audience"],
-
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtOptions:Key"] ?? "")),
-
-            ValidateLifetime = true,
-        };
-    });
+builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddMapster();
 builder.Services.AddDomainServices();
 builder.Services.AddCompressionToResponse();

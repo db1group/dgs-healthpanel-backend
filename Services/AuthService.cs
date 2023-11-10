@@ -16,6 +16,7 @@ namespace Db1HealthPanelBack.Services
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly IConfiguration _configuration;
+
         public AuthService(
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,

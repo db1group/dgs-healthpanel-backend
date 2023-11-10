@@ -6,3 +6,5 @@ bin*
 .config*
 .vs*
 .idea*
+.vs**
+.vs

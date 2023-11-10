@@ -10,6 +10,5 @@ namespace Db1HealthPanelBack.Models.Requests
 
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public required string Password { get; set; }
-
     }
 }

@@ -47,9 +47,9 @@ namespace Db1HealthPanelBack.Configs
             modelBuilder.ApplyConfiguration(new StackMap());
             modelBuilder.ApplyConfiguration(new StackProjectMap());
             modelBuilder.ApplyConfiguration(new ProjectResponderMap());
-            modelBuilder.Entity<IdentityUserLogin<string>>().HasNoKey();
-            modelBuilder.Entity<IdentityUserRole<string>>().HasNoKey();
-            modelBuilder.Entity<IdentityUserToken<string>>().HasNoKey();
+            modelBuilder.ApplyConfiguration(new IdentityUserLoginMap());
+            modelBuilder.ApplyConfiguration(new IdentityUserRoleMap());
+            modelBuilder.ApplyConfiguration(new IdentityUserTokenMap());
         }
 
         public Task<string[]> GetAllSonarMetricKeys() => Set<SonarMetric>().AsNoTracking().Select(prop => prop.Key).ToArrayAsync()!;
