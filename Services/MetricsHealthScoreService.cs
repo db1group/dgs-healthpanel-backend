@@ -14,13 +14,12 @@ namespace Db1HealthPanelBack.Services
 
         public async Task<decimal> GetMetricsHealthScore(Project project)
         {
-            if (project.SonarName.IsNullOrEmpty())
+            if (project.SonarName.IsNullOrEmpty() && project.SonarProjectKeys.IsNullOrEmpty())
                 return 0;
 
             var urlRequest = await DefineProjectUrlRequest(project);
 
             var client = new HttpClient();
-            HealthScore healthScore;
             HttpResponseMessage response;
 
             try
@@ -36,7 +35,8 @@ namespace Db1HealthPanelBack.Services
             if (!response.IsSuccessStatusCode)
                 return 0;
 
-            healthScore = await response.Content.ReadAsAsync<HealthScore>();
+            var healthScore = await response.Content.ReadAsAsync<HealthScore>();
+
             return healthScore is not null ? healthScore.Value!.Value : 0;
         }
 
