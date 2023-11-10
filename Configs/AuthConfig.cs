@@ -19,7 +19,7 @@ namespace Db1HealthPanelBack.Configs
                                 ValidAudience = configurationManager["JwtOptions:Audience"],
 
                                 ValidateIssuerSigningKey = true,
-                                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configurationManager["JwtOptions:Key"] ?? "")),
+                                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configurationManager["JwtOptions:Key"]!)),
 
                                 ValidateLifetime = true,
                             };

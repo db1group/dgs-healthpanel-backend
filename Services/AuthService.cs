@@ -55,13 +55,13 @@ namespace Db1HealthPanelBack.Services
         {
             var user = await _userManager.FindByEmailAsync(email);
 
-            var accessTokenClaims = await GetClaims(user, true);
-            var refrashTokenClaims = await GetClaims(user, false);
+            var accessTokenClaims = await GetClaims(user!, true);
+            var refrashTokenClaims = await GetClaims(user!, false);
 
             var dataExperationAccessToken = DateTime.UtcNow.AddSeconds(
-                double.Parse(_configuration["JwtOptions:AccessTokenExpiration"] ?? "3600"));
+                double.Parse(_configuration["JwtOptions:AccessTokenExpiration"]!));
             var dataExperationRefreshToken = DateTime.UtcNow.AddSeconds(
-                double.Parse(_configuration["JwtOptions:RefreshTokenExpiration"] ?? "10800"));
+                double.Parse(_configuration["JwtOptions:RefreshTokenExpiration"]!));
 
             var accessToken = GenerateToken(accessTokenClaims, dataExperationAccessToken);
             var refreshToken = GenerateToken(refrashTokenClaims, dataExperationRefreshToken);
@@ -75,7 +75,7 @@ namespace Db1HealthPanelBack.Services
 
         private string GenerateToken(IEnumerable<Claim> claims, DateTime expirationDate)
         {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtOptions:Key"] ?? ""));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtOptions:Key"]!));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             JwtSecurityToken jwt = new JwtSecurityToken(
@@ -90,12 +90,12 @@ namespace Db1HealthPanelBack.Services
             return new JwtSecurityTokenHandler().WriteToken(jwt);
         }
 
-        private async Task<IList<Claim>> GetClaims(IdentityUser? user, bool addUserClaims)
+        private async Task<IList<Claim>> GetClaims(IdentityUser user, bool addUserClaims)
         {
             var claims = new List<Claim>
             {
-                new(JwtRegisteredClaimNames.Sub, user?.Id ?? string.Empty),
-                new(JwtRegisteredClaimNames.Email, user?.Email ??  string.Empty),
+                new(JwtRegisteredClaimNames.Sub, user?.Id!),
+                new(JwtRegisteredClaimNames.Email, user?.Email!),
                 new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new(JwtRegisteredClaimNames.Nbf, DateTime.Now.ToString()),
             };

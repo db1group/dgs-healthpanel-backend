@@ -14,6 +14,5 @@ namespace Db1HealthPanelBack.Models.Requests
 
         [Compare(nameof(Password), ErrorMessage = "As senhas devem ser iguais")]
         public required string ConfirmPassword { get; set; }
-
     }
 }

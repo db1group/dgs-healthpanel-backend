@@ -15,7 +15,7 @@ namespace Db1HealthPanelBack.Controllers
 
         [HttpPost("create-user")]
         public async Task<IActionResult> Create([FromBody] CreateUserRequest request)
-        => await _userService.CreateUser(request);
+            => await _userService.CreateUser(request);
     }
 
 }
