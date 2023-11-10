@@ -6,5 +6,8 @@ namespace Db1HealthPanelBack.Infra.Shared
         public static string QuestionNeeded => "Fill The Questions";
         public static string ResponderAlreadyRegistered => "Project Responder already registered";
         public static string ResponderNotFound => "Project Responder Not Found";
+        public static string CreateUserFail => "Create user fail";
+        public static string LoginFail => "Login fail";
+        public static string UserNotFound => "User Not Found";
     }
 }

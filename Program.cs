@@ -1,7 +1,10 @@
+using System.Text;
 using System.Text.Json.Serialization;
 using Db1HealthPanelBack.Configs;
 using Db1HealthPanelBack.Configs.Middlewares;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,9 +13,48 @@ builder.Services.AddControllers()
                     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(configuration =>
+{
+    configuration.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Header de autorização JWT"
+    });
+    configuration.AddSecurityRequirement(new OpenApiSecurityRequirement{
+        {
+            new OpenApiSecurityScheme{
+                Reference = new OpenApiReference
+                {
+                    Type= ReferenceType.SecurityScheme,
+                    Id= "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddIdentity(builder.Configuration);
+builder.Services.AddAuthentication("JwtBearer").AddJwtBearer("JwtBearer", options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = builder.Configuration["JwtOptions:Issuer"],
+
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration["JwtOptions:Audience"],
+
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtOptions:Key"] ?? "")),
+
+            ValidateLifetime = true,
+        };
+    });
 builder.Services.AddMapster();
 builder.Services.AddDomainServices();
 builder.Services.AddCompressionToResponse();

@@ -1,6 +1,7 @@
+using System.Security.Claims;
 using Db1HealthPanelBack.Models.Requests;
+using Db1HealthPanelBack.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Db1HealthPanelBack.Controllers
@@ -9,43 +10,26 @@ namespace Db1HealthPanelBack.Controllers
     [Route("[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly AuthService _authService;
 
-        [HttpGet]
-        public ActionResult<string> GetUser()
+        public AuthController(AuthService authService)
+            => _authService = authService;
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
+         => await _authService.Login(request);
+
+        [Authorize(AuthenticationSchemes = "JwtBearer")]
+        [HttpPost("refresh-login")]
+        public async Task<IActionResult> RefreshLogin()
         {
-            return "Teste de retorno GET";
+            var Identity = HttpContext.User.Identity as ClaimsIdentity;
+            var userId = Identity?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userId == null)
+                return BadRequest();
+
+            return await _authService.LoginWithoutPassword(userId);
         }
-
-        public AuthController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
-        {
-            _userManager = userManager;
-            _signInManager = signInManager;
-        }
-
-        [HttpPost("register")]
-        public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request)
-        {
-            var user = new IdentityUser
-            {
-                UserName = request.Name,
-                Email = request.Email,
-                EmailConfirmed = true
-            };
-
-            var userCreateResult = await _userManager.CreateAsync(user, request.Password);
-
-            if (!userCreateResult.Succeeded)
-            {
-                return BadRequest(userCreateResult.Errors);
-            }
-
-            await _signInManager.SignInAsync(user, false);
-
-            return Ok();
-        }
-
     }
-
 }

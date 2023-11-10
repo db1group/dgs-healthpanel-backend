@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Db1HealthPanelBack.Controllers;
 
-[Authorize]
+[Authorize(AuthenticationSchemes = "JwtBearer")]
 [ApiController]
 [Route("[controller]")]
 public class StackController : ControllerBase
@@ -38,7 +38,7 @@ public class StackController : ControllerBase
         [FromQuery] List<string>? languageId,
         [FromQuery] bool listOnlyActive = true)
         => await _stackService.GetStacks(languageId, listOnlyActive);
-    
+
     [HttpPost("add/stack")]
     public async Task<IActionResult> AddStacks(
         [FromBody] AddStackRequest request)
