@@ -1,13 +1,8 @@
 {
   "ExpandedNodes": [
     "",
-    "\\Entities",
-    "\\Migrations",
-    "\\Models",
-    "\\Models\\Responses",
-    "\\Properties",
-    "\\Services"
+    "\\Controllers"
   ],
-  "SelectedNode": "\\appsettings.Development.json",
+  "SelectedNode": "\\Controllers\\AuthController.cs",
   "PreviewInSolutionExplorer": false
 }

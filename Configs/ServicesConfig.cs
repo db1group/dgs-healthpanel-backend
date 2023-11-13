@@ -20,6 +20,8 @@ namespace Db1HealthPanelBack.Configs
             services.AddScoped<SonarHttpService>();
             services.AddScoped<StackService>();
             services.AddScoped<ProjectResponderService>();
+            services.AddScoped<AuthService>();
+            services.AddScoped<UserService>();
         }
 
         public static void AddCompressionToResponse(this IServiceCollection services)

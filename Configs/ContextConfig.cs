@@ -1,10 +1,13 @@
 using Db1HealthPanelBack.Entities;
 using Db1HealthPanelBack.Infra.EntityMaps;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+
 
 namespace Db1HealthPanelBack.Configs
 {
-    public class ContextConfig : DbContext
+    public class ContextConfig : IdentityDbContext
     {
         public required DbSet<Answer> Answers { get; set; }
         public required DbSet<AnswerQuestion> AnswersQuestions { get; set; }
@@ -24,7 +27,7 @@ namespace Db1HealthPanelBack.Configs
         public required DbSet<StackProject> StackProjects { get; set; }
         public required DbSet<ProjectResponder> ProjectResponders { get; set; }
 
-        public ContextConfig(DbContextOptions options) : base(options) {}
+        public ContextConfig(DbContextOptions options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -44,6 +47,9 @@ namespace Db1HealthPanelBack.Configs
             modelBuilder.ApplyConfiguration(new StackMap());
             modelBuilder.ApplyConfiguration(new StackProjectMap());
             modelBuilder.ApplyConfiguration(new ProjectResponderMap());
+            modelBuilder.ApplyConfiguration(new IdentityUserLoginMap());
+            modelBuilder.ApplyConfiguration(new IdentityUserRoleMap());
+            modelBuilder.ApplyConfiguration(new IdentityUserTokenMap());
         }
 
         public Task<string[]> GetAllSonarMetricKeys() => Set<SonarMetric>().AsNoTracking().Select(prop => prop.Key).ToArrayAsync()!;
