@@ -46,9 +46,22 @@ namespace Db1HealthPanelBack.Services
 
             var evaluationsWithScores = new List<EvaluationAnalyticResponse>();
 
+            var answersId = evaluations.Select(p => p.AnswerId).Distinct();
+
+            var answersResult = await _contextConfig.Answers
+                .Where(prop => answersId.Contains(prop.Id))
+                .Include(prop => prop.Questions)
+                .Include(prop => prop.Pillars!)
+                    .ThenInclude(prop => prop.Pillar!)
+                    .ThenInclude(prop => prop.Columns!)
+                        .ThenInclude(prop => prop.Questions)
+                .ToListAsync();
+
             foreach (var evaluation in evaluations)
             {
-                var pillarsScores = await CalculateProcessScore(evaluation.AnswerId ?? Guid.Empty);
+                var answerToCalculate = answersResult.FirstOrDefault(prop => prop.Id == evaluation.AnswerId);
+
+                var pillarsScores = CalculateProcessScore(answerToCalculate!);
 
                 var evaluationWithScores = new EvaluationAnalyticResponse
                 {
@@ -83,7 +96,7 @@ namespace Db1HealthPanelBack.Services
             {
                 evaluation.ProcessHealthScore = processHealthScore;
                 evaluation.MetricsHealthScore = metricsHealthScore;
-            } 
+            }
             else evaluation = new Evaluation
             {
                 Date = DateTime.Now,
@@ -168,20 +181,12 @@ namespace Db1HealthPanelBack.Services
             return query;
         }
 
-        public async Task<IEnumerable<PillarScore>> CalculateProcessScore(Guid answerId)
+        public IEnumerable<PillarScore> CalculateProcessScore(Answer answer)
         {
-            var answerResult = answerId != Guid.Empty ? await _contextConfig.Answers
-                .Include(prop => prop.Questions)
-                .Include(prop => prop.Pillars!)
-                    .ThenInclude(prop => prop.Pillar!)
-                    .ThenInclude(prop => prop.Columns!)
-                        .ThenInclude(prop => prop.Questions)
-                .FirstAsync(prop => prop.Id == answerId) : null;
-
             var pillarsScore = new List<PillarScore>();
 
-            if (answerResult is not null)
-                foreach (var pillar in answerResult.Pillars!)
+            if (answer is not null)
+                foreach (var pillar in answer.Pillars!)
                 {
                     var questionsScore = new List<dynamic>();
 
@@ -189,7 +194,7 @@ namespace Db1HealthPanelBack.Services
                     {
                         var questionsIds = column.Questions!.Select(qt => qt.Id);
 
-                        var answerQuestionsScore = answerResult.Questions!
+                        var answerQuestionsScore = answer.Questions!
                             .Where(prop => questionsIds.Contains(prop.QuestionId) && prop.Value == "DONE");
 
                         var percentageQuestion = decimal.Round((decimal)answerQuestionsScore.Count() / column.Questions!.Count * 100, 2);

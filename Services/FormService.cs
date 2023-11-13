@@ -18,7 +18,7 @@ namespace Db1HealthPanelBack.Services
         private readonly CurrentUserService _currentUserService;
         private readonly MetricsHealthScoreService _metricsHealthScoreService;
 
-        public FormService(ContextConfig contextConfig, EvaluationService evaluationService, 
+        public FormService(ContextConfig contextConfig, EvaluationService evaluationService,
             CurrentUserService currentUserService, MetricsHealthScoreService metricsHealthScoreService)
         {
             _contextConfig = contextConfig;
@@ -116,6 +116,9 @@ namespace Db1HealthPanelBack.Services
                 }).ToList(),
                 Pillars = answerPillarsIds?.Select(p => new AnswerPillar
                 {
+                    Pillar = _contextConfig.Pillars.Include(pillar => pillar.Columns!)
+                                                        .ThenInclude(column => column.Questions)
+                                                   .First(prop => prop.Id == p),
                     PillarId = p ?? Guid.NewGuid(),
                     AdditionalData = request.Pillars?.First(rp => rp.PillarId == p).AdditionalData
                 }).ToList(),
@@ -125,7 +128,7 @@ namespace Db1HealthPanelBack.Services
             await _contextConfig.AddRangeAsync(newAnswers);
             await _contextConfig.SaveChangesAsync();
 
-            var processScoreCalculated = await _evaluationService.CalculateProcessScore(newAnswers.Id);
+            var processScoreCalculated = _evaluationService.CalculateProcessScore(newAnswers);
             var metricsHealthScoreCalculated = await _metricsHealthScoreService.GetMetricsHealthScore(project);
             await _evaluationService.FeedEvaluation(newAnswers.ProjectId,
                 processScoreCalculated.Sum(prop => prop.Score), metricsHealthScoreCalculated, newAnswers!.Id);
@@ -137,7 +140,7 @@ namespace Db1HealthPanelBack.Services
         {
             var responder =
                 await _contextConfig.ProjectResponders
-                    .FirstOrDefaultAsync(prop => prop.Email == _currentUserService.UserName && 
+                    .FirstOrDefaultAsync(prop => prop.Email == _currentUserService.UserName &&
                                                  prop.ProjectId == projectId);
             return responder?.Id ?? Guid.Empty;
         }
