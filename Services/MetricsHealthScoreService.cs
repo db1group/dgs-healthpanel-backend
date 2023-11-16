@@ -25,6 +25,8 @@ namespace Db1HealthPanelBack.Services
             try
             {
                 response = await client.GetAsync(urlRequest);
+                Console.WriteLine("URL: " + urlRequest);
+                Console.WriteLine("RESPONSE: " + response.Content.ReadAsStringAsync().Result);
             }
             catch (Exception e)
             {
@@ -36,7 +38,6 @@ namespace Db1HealthPanelBack.Services
                 return 0;
 
             var healthScore = await response.Content.ReadAsAsync<HealthScore>();
-
             return healthScore is not null ? healthScore.Value!.Value : 0;
         }
 
