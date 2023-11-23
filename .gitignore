@@ -6,3 +6,4 @@ bin*
 .config*
 .vs*
 .idea*
+Properties/launchSettings.json

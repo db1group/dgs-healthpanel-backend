@@ -61,7 +61,22 @@ namespace Db1HealthPanelBack.Controllers
         /// Create a project
         /// </summary>
         /// <param name="project"></param>
-        /// <returns></returns>
+        /// <remarks>
+        /// Sample request:
+        /// 
+        ///     POST /project
+        ///     {
+        ///         "name": "Project Name",
+        ///         "sonarName": "Sonar Name",
+        ///         "sonarUrl": "Sonar Url",
+        ///         "sonarToken": "Sonar Token",
+        ///         "sonarProjectKeys": "Sonar Project Keys",
+        ///         "leadProjects": [{ leadId: "Lead Id" }],
+        ///         "costCenter": { costCenterId: "Cost Center Id" }
+        ///     }
+        ///     
+        /// </remarks>
+        /// <returns>A newly created project</returns>
         [HttpPost]
         [ProducesResponseType<ProjectResponse>(StatusCodes.Status201Created)]
         public async Task<IActionResult> Create([FromBody] ProjectRequest project)
