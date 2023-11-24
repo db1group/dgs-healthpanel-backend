@@ -25,7 +25,7 @@
       },
       "distributionName": "Ubuntu-22.04",
       "workingDirectory": "/home/erick/projects/db1-group/db1-healthpanel/dgs-healthpanel-backend",
-      "commandLineArgs": "bin/Debug/net7.0/db1-healthpanel-back.dll"
+      "commandLineArgs": "bin/Debug/net8.0/db1-healthpanel-back.dll"
     }
   },
   "$schema": "https://json.schemastore.org/launchsettings.json",
