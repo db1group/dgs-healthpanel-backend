@@ -1,6 +1,7 @@
 using System.Net;
 using Db1HealthPanelBack.Configs;
 using Db1HealthPanelBack.Entities;
+using Db1HealthPanelBack.Infra.Http;
 using Db1HealthPanelBack.Models.Requests;
 using Db1HealthPanelBack.Models.Responses;
 using Db1HealthPanelBack.Models.Responses.Errors;
@@ -14,10 +15,12 @@ namespace Db1HealthPanelBack.Services
     public class ProjectService
     {
         private readonly ContextConfig _contextConfig;
+        private readonly SonarHttpService _sonarHttpService;
 
-        public ProjectService(ContextConfig contextConfig)
+        public ProjectService(ContextConfig contextConfig, SonarHttpService sonarHttpService)
         {
             _contextConfig = contextConfig;
+            _sonarHttpService = sonarHttpService;
         }
 
         public async Task<IEnumerable<ProjectResponse>> GetAllProjects()
@@ -64,6 +67,10 @@ namespace Db1HealthPanelBack.Services
             var costCenter = await _contextConfig.CostCenters.FirstAsync(prop => prop.Id == project.CostCenter!.Id);
 
             if (costCenter is null) return new ErrorResponse("Cost Center Not Found");
+
+            var sonarTokenValidationResult = await SonarTokenValidation(project.SonarUrl!, project.SonarToken!, projectResult);
+
+            if (sonarTokenValidationResult is not null) return sonarTokenValidationResult;
 
             var isDuplicate = _contextConfig.Projects.Where(proj => proj.Name == project.Name).Any();
 
@@ -138,6 +145,10 @@ namespace Db1HealthPanelBack.Services
             var projectEntity = createProject.Adapt<Project>();
             projectEntity.CostCenter = costCenter;
 
+            var sonarTokenValidationResult = await SonarTokenValidation(createProject.SonarUrl!, createProject.SonarToken!, projectEntity);
+
+            if (sonarTokenValidationResult is not null) return sonarTokenValidationResult;
+
             var isDuplicate = _contextConfig.Projects.Where(project => project.Name == createProject.Name).Any();
 
             if (isDuplicate)
@@ -172,6 +183,23 @@ namespace Db1HealthPanelBack.Services
             await _contextConfig.SaveChangesAsync();
 
             return new ObjectResult(null) { StatusCode = (int)HttpStatusCode.NoContent };
+        }
+
+        private async Task<IActionResult?> SonarTokenValidation(string sonarUrl, string sonarToken, Project project)
+        {
+            if (!string.IsNullOrEmpty(sonarToken) || !string.IsNullOrEmpty(sonarUrl))
+            {
+                var sonarTokenValidationResult = await _sonarHttpService.SonarTokenValidation(sonarUrl!, sonarToken!);
+                var valid = sonarTokenValidationResult!.Valid;
+
+                if (!valid)
+                {
+                    var resultError = project.Adapt<ProjectResponse>();
+                    resultError.SetStatusCode(400);
+                    return resultError;
+                };
+            }
+            return null;
         }
     }
 }

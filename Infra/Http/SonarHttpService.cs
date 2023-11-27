@@ -1,4 +1,7 @@
-﻿using Db1HealthPanelBack.Infra.Http.HttpResponses;
+﻿using System.Text;
+using Db1HealthPanelBack.Infra.Http.HttpResponses;
+using Db1HealthPanelBack.Models.Responses;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Db1HealthPanelBack.Infra.Http;
 
@@ -23,7 +26,7 @@ public class SonarHttpService
             ? new List<string?>()
             : project.Projects?.Select(p => p.Key).ToList() ?? new List<string?>();
     }
-    
+
     public async Task<List<string?>> GetProjectStacks(string projectKey)
     {
         var request = BuildRequest(
@@ -36,10 +39,23 @@ public class SonarHttpService
         var listOfStacks = new List<string?>();
         foreach (var measure in stack?.Component?.Measures ?? new List<Measure>())
         {
-            listOfStacks.AddRange(measure.Language);     
+            listOfStacks.AddRange(measure.Language);
         }
 
         return listOfStacks.Distinct().ToList();
+    }
+
+    public async Task<SonarTokenValidationResponse?> SonarTokenValidation(string uri, string sonarToken)
+    {
+        var url = _configuration["Sonar:url"];
+        var sonarTokenConverted = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{sonarToken}:"));
+        RequestData request = new()
+        {
+            Uri = $"{(uri.IsNullOrEmpty() ? $"{url}" : $"{uri}")}/api/authentication/validate",
+            Headers = new() { { $"Authorization", $"Basic {(sonarToken.IsNullOrEmpty() ? "" : $"{sonarTokenConverted}")}" } },
+        };
+
+        return await _httpService.Get<SonarTokenValidationResponse>(request);
     }
 
     private RequestData BuildRequest(string route, string queryString)
