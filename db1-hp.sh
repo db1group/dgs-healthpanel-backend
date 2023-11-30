@@ -4,7 +4,7 @@ set -x
 check_existing_docker() {
     if command -v docker >/dev/null || command -v podman >/dev/null && command -v docker-compose >/dev/null; then
         echo "Docker / Podman e Docker Compose já estão instalados no sistema."
-        # exit 0
+        echo ""
     else
         check_linux_distribution
     fi
