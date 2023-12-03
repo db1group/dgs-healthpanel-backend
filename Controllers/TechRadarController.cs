@@ -1,38 +1,22 @@
 ﻿using Db1HealthPanelBack.Services;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Db1HealthPanelBack.Controllers
 {
     [Authorize]
     [ApiController]
     [Route("[controller]")]
-    public class TechRadarController : ControllerBase
+    public class TechRadarController(TechRadarService techRadarService) : ControllerBase
     {
-        private readonly HttpClient _httpClient;
-        private readonly TechRadarService _techRadarService;
-        private readonly StackService _stackService;
+        private readonly TechRadarService _techRadarService = techRadarService;
 
-        public TechRadarController(IHttpClientFactory httpClientFactory, StackService stackService)
-        {
-            _httpClient = httpClientFactory.CreateClient();
-            _techRadarService = new TechRadarService();
-            _stackService = stackService;
-        }
-        
         [HttpGet("compare")]
         public async Task<IActionResult> GetRadarTechComparison([FromQuery] List<Guid>? projectIds)
         {
-            HttpResponseMessage response = await _httpClient.GetAsync("https://techradar.db1.com.br/db1-opinion.json");
-            if (!response.IsSuccessStatusCode) return StatusCode((int)response.StatusCode);
-            
-            var stackData = await _stackService.GetStacks(projectIds: projectIds, listOnlyActive: true);
-            string techRadarContent = await response.Content.ReadAsStringAsync();
+            var result = await _techRadarService.FetchTechRadarComparison(projectIds);
 
-            var techComparison = _techRadarService.GetTechComparisons(stackData, techRadarContent);
-
-            return Ok(techComparison);
-
+            return result is null ? UnprocessableEntity() : Ok(result);
         }
     }
 }

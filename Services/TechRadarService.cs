@@ -1,4 +1,5 @@
-﻿using Db1HealthPanelBack.Models.Requests;
+﻿using Db1HealthPanelBack.Infra.Http;
+using Db1HealthPanelBack.Models.Requests;
 using Db1HealthPanelBack.Models.Responses;
 using Newtonsoft.Json;
 
@@ -6,10 +7,32 @@ namespace Db1HealthPanelBack.Services
 {
     public class TechRadarService
     {
+        private readonly TechRadarHttpService _techRadarHttpService;
+        private readonly StackService _stackService;
+
+        public TechRadarService(StackService stackService, TechRadarHttpService techRadarHttpService)
+        {
+            _stackService = stackService;
+            _techRadarHttpService = techRadarHttpService;
+        }
+
+        public async Task<List<ProjectTechRadarResponse>?> FetchTechRadarComparison(List<Guid>? projectIds)
+        {
+            var techRadarContent = await _techRadarHttpService.GetTechOpinion();
+
+            if (techRadarContent is null) return null;
+
+            var stackData = await _stackService.GetStacks(projectIds: projectIds, listOnlyActive: true);
+            var techComparison = GetTechComparisons(stackData, techRadarContent);
+
+            return techComparison;
+        }
+
         public List<ProjectTechRadarResponse> GetTechComparisons(List<ProjectStacksResponse> stackData, string techRadar)
         {
             var originalTechRadarData = JsonConvert.DeserializeObject<TechRadarRequest>(techRadar);
-            List<ProjectTechRadarResponse> projectTechRadarResponses = new List<ProjectTechRadarResponse>();
+            List<ProjectTechRadarResponse> projectTechRadarResponses = [];
+
             foreach (var project in stackData)
             {
                 var response = CompareTechs(originalTechRadarData!, project);
@@ -21,10 +44,10 @@ namespace Db1HealthPanelBack.Services
                 };
                 projectTechRadarResponses.Add(projectTechRadarResponse);
             }
-            
+
             return projectTechRadarResponses;
         }
-        
+
         private List<TechRadarResponse> CompareTechs(TechRadarRequest techRadarData, ProjectStacksResponse projectStackData)
         {
             var radarStack = techRadarData.Items!;
@@ -64,7 +87,7 @@ namespace Db1HealthPanelBack.Services
                 unspecified);
         }
 
-        private string CalculateByRing(List<TechRadarResponse> techRadarResponse,Ring? ring)
+        private string CalculateByRing(List<TechRadarResponse> techRadarResponse, Ring? ring)
         {
             var totalStacks = Convert.ToDecimal(techRadarResponse.Count);
 
