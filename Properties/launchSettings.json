@@ -17,7 +17,7 @@
       }
     },
     "WSL: Ubuntu": {
-      "commandName": "WSL",
+      "commandName": "WSL2",
       "launchUrl": "http://localhost:5000/doc/",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",

@@ -1,15 +1,18 @@
 ﻿using Db1HealthPanelBack.Entities;
 using Microsoft.IdentityModel.Tokens;
+using System.Text.Json;
 
 namespace Db1HealthPanelBack.Services
 {
     public class MetricsHealthScoreService
     {
         private readonly IConfiguration _configuration;
+        private readonly ILogger<MetricsHealthScoreService> _logger;
 
-        public MetricsHealthScoreService(IConfiguration configuration)
+        public MetricsHealthScoreService(IConfiguration configuration, ILogger<MetricsHealthScoreService> logger)
         {
             _configuration = configuration;
+            _logger = logger;
         }
 
         public async Task<decimal> GetMetricsHealthScore(Project project)
@@ -25,8 +28,9 @@ namespace Db1HealthPanelBack.Services
             try
             {
                 response = await client.GetAsync(urlRequest);
-                Console.WriteLine("URL: " + urlRequest);
-                Console.WriteLine("RESPONSE: " + response.Content.ReadAsStringAsync().Result);
+
+                _logger.LogInformation("URL: {0}", urlRequest);
+                _logger.LogInformation("RESPONSE: {0}" + response.Content.ReadAsStringAsync().Result);
             }
             catch (Exception e)
             {
@@ -37,7 +41,9 @@ namespace Db1HealthPanelBack.Services
             if (!response.IsSuccessStatusCode)
                 return 0;
 
-            var healthScore = await response.Content.ReadAsAsync<HealthScore>();
+            var jsonResponse = await response.Content.ReadAsStreamAsync();
+            var healthScore = await JsonSerializer.DeserializeAsync<HealthScore>(jsonResponse);
+
             return healthScore is not null ? healthScore.Value!.Value : 0;
         }
 
