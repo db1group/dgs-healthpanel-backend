@@ -99,8 +99,8 @@ main() {
         echo ""
         echo "Por favor, forneça o parâmetro!"
         echo ""
-        echo "1. db1@dgs$ ./db1-hp db  ---> Only DB"
-        echo "2. db1@dgs$ ./db1-hp app ---> Only App + DB"
+        echo "1. db1@dgs$ ./db1-hp db    ---> Only DB"
+        echo "2. db1@dgs$ ./db1-hp app   ---> Only App + DB"
         echo "3. db1@dgs$ ./db1-hp clear ---> Clear the project"
         echo ""
     else
