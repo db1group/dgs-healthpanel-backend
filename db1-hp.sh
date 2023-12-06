@@ -1,6 +1,18 @@
 #!/bin/bash
 #set -x
-
+# ===========================================================================
+# Licensed Materials - Property of DB1 Global Software
+# "Restricted Materials of DB1 Global Software"
+# 
+# DB1 Scripting
+# (C) Copyright DB1 Global Software. 2023. All Rights Reserved
+# ===========================================================================
+# Title           : db1-hp.sh
+# Description     : Automation Script Health Proicess ( DB + APP )
+# Author          : levi.alves@db1.com.br
+# Date            : 2023-Dec-06
+# Version         : 1.0
+# ===========================================================================
 check_existing_docker() {
     if command -v docker >/dev/null || command -v podman >/dev/null && command -v docker-compose >/dev/null; then
         echo "Docker / Podman e Docker Compose já estão instalados no sistema."
@@ -88,53 +100,97 @@ check_existing_browser() {
     fi
 }
 
+ask_for_scp() {
+    while true; do
+        read -p "Deseja atualizar o banco de dados? (S/N): " answer
+        case $answer in
+            [Ss]* ) return 0;;
+            [Nn]* ) return 1;;
+            * ) echo "Por favor, responda com 'S' para Sim ou 'N' para Não.";;
+        esac
+    done
+}
+
+pgclear() {
+    echo "Stopping PostgreSQL..."
+    docker container stop HealthPanelDevPostgres 2>/dev/null
+    docker container prune -f 2>/dev/null
+    sleep 5 2>/dev/null
+    echo "Stopped PostgreSQL !"
+}
+
+appstop() {
+    echo "Stopping App..."
+    ps -ef|grep db1-healthpanel-back | grep -v grep | awk '{print $2}' | xargs -l kill 2>/dev/null
+    sleep 5 2>/dev/null
+    echo "App Stopped Successfully !"
+}
+
+main_help() {
+    echo ""
+    echo "Por favor, forneça os parâmetros corretos!"
+    echo ""
+    echo "Exemplo de uso:"
+    echo "./db1-hp.sh \$USER \$TYPE"
+    echo ""
+    echo "./db1-hp.sh db1.user db       ---> Only DB"
+    echo "./db1-hp.sh db1.user app      ---> Only App + DB"
+    echo "./db1-hp.sh db1.user clear    ---> Clear all the project"
+    echo "./db1-hp.sh db1.user pgclear  ---> PostgreSQL Clear"
+    echo "./db1-hp.sh db1.user appstop  ---> Stop App"
+    echo ""
+}
+
 main() {
     HC_PATH=$(pwd)
-
     echo "DB1 Global Software - Health Process"
+    USER=$1
+    TYPE=$2
 
-    COMPONENT=$HC_PATH/$1
-
-    if [ "$#" -lt 1 ]; then
-        echo ""
-        echo "Por favor, forneça o parâmetro!"
-        echo ""
-        echo "1. db1@dgs$ ./db1-hp db    ---> Only DB"
-        echo "2. db1@dgs$ ./db1-hp app   ---> Only App + DB"
-        echo "3. db1@dgs$ ./db1-hp clear ---> Clear the project"
-        echo ""
+    if [ "$#" -lt 2 ]; then
+        main_help
     else
-        if [ "$1" = "db" ]; then
+        if [ "$TYPE" = "db" ]; then
             check_existing_docker
-            echo "Digite sua senha de intranet para copiar o arquivo Dump PostgreSQL"
-            scp $USER@10.200.10.16:/tmp/backup_all_databases.sql /tmp/
-            docker run --name HealthPanelDevPostgres -e POSTGRES_USER=healthpanel -e POSTGRES_PASSWORD=healthpanel -e POSTGRES_DB=healthpanelprocess -d postgres:15.3
+            if ask_for_scp; then
+                echo "Digite sua senha DB1 intranet para copiar o arquivo Dump PostgreSQL"
+                scp $USER@10.200.10.16:/tmp/backup_all_databases.sql /tmp/ 2>/dev/null
+            fi
+            pgclear
+            docker run --name HealthPanelDevPostgres -p 5432:5432 -e POSTGRES_USER=healthpanel -e POSTGRES_PASSWORD=healthpanel -e POSTGRES_DB=healthpanelprocess -d postgres:15.3
             sleep 5
             docker exec -i HealthPanelDevPostgres psql -U healthpanel -d healthpanelprocess < /tmp/backup_all_databases.sql
-        elif [ "$1" = "app" ]; then
+        elif [ "$TYPE" = "app" ]; then
             check_existing_docker
-
-            echo "Digite sua senha de intranet para copiar o arquivo Dump PostgreSQL"
-            scp $USER@10.200.10.16:/tmp/backup_all_databases.sql /tmp/
-            docker run --name HealthPanelDevPostgres -e POSTGRES_USER=healthpanel -e POSTGRES_PASSWORD=healthpanel -e POSTGRES_DB=healthpanelprocess -d postgres:15.3
+            if ask_for_scp; then
+                echo "Digite sua senha DB1 de intranet para copiar o arquivo Dump PostgreSQL"
+                scp $USER@10.200.10.16:/tmp/backup_all_databases.sql /tmp/ 2>/dev/null
+            fi
+            pgclear
+            docker run --name HealthPanelDevPostgres -p 5432:5432 -e POSTGRES_USER=healthpanel -e POSTGRES_PASSWORD=healthpanel -e POSTGRES_DB=healthpanelprocess -d postgres:15.3
             sleep 5
             docker exec -i HealthPanelDevPostgres psql -U healthpanel -d healthpanelprocess < /tmp/backup_all_databases.sql
             dotnet run appsettings.Development.json &
             sleep 5
-
-            check_existing_browser
-        elif [ "$1" = "clear" ]; then
-            echo "Cleaning..."
+            check_existing_browser         
+        elif [ "$TYPE" = "clear" ]; then
+            echo "Cleaning up..."
             docker container stop HealthPanelDevPostgres 2>/dev/null
             docker container prune -f 2>/dev/null
             docker image rm -f postgres:15.3 2>/dev/null
             HCPID=`lsof -i :7101 | awk '{print $2}'` 2>/dev/null
             kill -9 $HCPID 2>/dev/null
             sleep 5
-            echo "Done !"
+            echo "Cleared Successfully !"
+        elif [ "$TYPE" = "pgclear" ]; then
+            pgclear
+        elif [ "$TYPE" = "appstop" ]; then
+            appstop   
         else
-            echo
-            echo "Parâmetro inválido. Use 'db' ou 'app'."
+            echo ""
+            echo "Parâmetro inválido."
+            echo ""
+            main_help
         fi
     fi
 }
