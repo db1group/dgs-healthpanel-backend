@@ -144,7 +144,7 @@ main_help() {
 main() {
     HC_PATH=$(pwd)
     echo "DB1 Global Software - Health Process"
-    USER=$1
+    DB1USER=$1
     TYPE=$2
 
     if [ "$#" -lt 2 ]; then
@@ -154,7 +154,7 @@ main() {
             check_existing_docker
             if ask_for_scp; then
                 echo "Digite sua senha DB1 intranet para copiar o arquivo Dump PostgreSQL"
-                scp $USER@10.200.10.16:/tmp/backup_all_databases.sql /tmp/ 2>/dev/null
+                scp $DB1USER@10.200.10.16:/tmp/backup_all_databases.sql /tmp/ 2>/dev/null
             fi
             pgclear
             docker run --name HealthPanelDevPostgres -p 5432:5432 -e POSTGRES_USER=healthpanel -e POSTGRES_PASSWORD=healthpanel -e POSTGRES_DB=healthpanelprocess -d postgres:15.3
@@ -164,7 +164,7 @@ main() {
             check_existing_docker
             if ask_for_scp; then
                 echo "Digite sua senha DB1 de intranet para copiar o arquivo Dump PostgreSQL"
-                scp $USER@10.200.10.16:/tmp/backup_all_databases.sql /tmp/ 2>/dev/null
+                scp $DB1USER@10.200.10.16:/tmp/backup_all_databases.sql /tmp/ 2>/dev/null
             fi
             pgclear
             docker run --name HealthPanelDevPostgres -p 5432:5432 -e POSTGRES_USER=healthpanel -e POSTGRES_PASSWORD=healthpanel -e POSTGRES_DB=healthpanelprocess -d postgres:15.3
