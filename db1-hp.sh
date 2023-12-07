@@ -8,14 +8,14 @@
 # (C) Copyright DB1 Global Software. 2023. All Rights Reserved
 # ===========================================================================
 # Title           : db1-hp.sh
-# Description     : Automation Script Health Proicess ( DB + APP )
+# Description     : Automation Script Health Process ( DB + APP )
 # Author          : levi.alves@db1.com.br
 # Date            : 2023-Dec-06
 # Version         : 1.0
 # ===========================================================================
 check_existing_docker() {
     if command -v docker >/dev/null || command -v podman >/dev/null && command -v docker-compose >/dev/null; then
-        echo "Docker / Podman e Docker Compose já estão instalados no sistema."
+        echo "Docker / Podman and Docker Compose are already installed on the system."
         echo ""
     else
         check_linux_distribution
@@ -26,68 +26,68 @@ check_linux_distribution() {
     if [ -f /etc/os-release ]; then
         . /etc/os-release
         if [ "$ID" = "debian" ] || [ "$ID" = "ubuntu" ]; then
-            echo "Debian ou Ubuntu detectado."
+            echo "Debian or Ubuntu detected."
             install_docker_compose
         elif [ "$ID" = "rhel" ] || [ "$ID" = "centos" ] || [ "$ID" = "fedora" ] ; then
-            echo "RedHat, CentOS ou Fedora detectado."
+            echo "RedHat, CentOS, or Fedora detected."
             install_docker_compose
         elif [ "$ID" = "suse" ] || [ "$ID" = "sles" ]; then
-            echo "SUSE detectado."
+            echo "SUSE detected."
             install_docker_compose
         elif [ "$ID" = "amzn" ]; then
-            echo "Amazon Linux detectado."
+            echo "Amazon Linux detected."
             install_docker_compose_amzn
         elif [ "$ID" = "ol" ]; then
-            echo "Oracle Linux detectado."
+            echo "Oracle Linux detected."
             install_docker_compose_ol
         else
-            echo "Distribuição não suportada."
+            echo "Distribution not supported."
         fi
     else
-        echo "Arquivo /etc/os-release não encontrado. Não é possível determinar a distribuição."
+        echo "File /etc/os-release not found. Unable to determine the distribution."
     fi
 }
 
 install_docker_compose() {
-    echo "Instalando Docker..."
+    echo "Installing Docker..."
     curl -fsSL https://get.docker.com -o get-docker.sh
     sudo sh get-docker.sh
     sudo usermod -aG docker $USER
     sudo systemctl start docker
     sudo systemctl enable docker
     sudo rm -f get-docker.sh
-    echo "Docker instalado com sucesso."
+    echo "Docker installed successfully."
 
-    echo "Instalando Docker Compose v2..."
+    echo "Installing Docker Compose v2..."
     sudo curl -fsSL -o /usr/local/bin/docker-compose https://github.com/docker/compose/releases/download/v2.23.0/docker-compose-linux-x86_64
     sudo chmod +x /usr/local/bin/docker-compose
-    echo "Docker Compose v2 instalado com sucesso."
+    echo "Docker Compose v2 installed successfully."
 }
 
 install_docker_compose_amzn() {
-    echo "Instalando Docker..."
+    echo "Installing Docker..."
     sudo yum install docker -y
     sudo systemctl start docker
     sudo systemctl enable docker
-    echo "Docker instalado com sucesso."
+    echo "Docker installed successfully."
 
-    echo "Instalando Docker Compose v2..."
+    echo "Installing Docker Compose v2..."
     sudo curl -fsSL -o /usr/local/bin/docker-compose https://github.com/docker/compose/releases/download/v2.23.0/docker-compose-linux-x86_64
     sudo chmod +x /usr/local/bin/docker-compose
-    echo "Docker Compose v2 instalado com sucesso."
+    echo "Docker Compose v2 installed successfully."
 }
 
 install_docker_compose_ol() {
-    echo "Instalando Docker / Podman..."
+    echo "Installing Docker / Podman..."
     sudo yum install docker -y
     sudo systemctl start podman
     sudo systemctl enable podman
-    echo "Docker / Podman instalado com sucesso."
+    echo "Docker / Podman installed successfully."
 
-    echo "Instalando Docker Compose v2..."
+    echo "Installing Docker Compose v2..."
     sudo curl -fsSL -o /usr/local/bin/docker-compose https://github.com/docker/compose/releases/download/v2.23.0/docker-compose-linux-x86_64
     sudo chmod +x /usr/local/bin/docker-compose
-    echo "Docker Compose v2 instalado com sucesso."
+    echo "Docker Compose v2 installed successfully."
 }
 
 check_existing_browser() {
@@ -96,17 +96,17 @@ check_existing_browser() {
     elif command -v google-chrome >/dev/null; then
         google-chrome https://localhost:7101/swagger/index.html &
     else
-        echo "Nao existe Firefox ou Google Chrome instalado"
+        echo "Firefox or Google Chrome not installed."
     fi
 }
 
 ask_for_scp() {
     while true; do
-        read -p "Deseja atualizar o banco de dados? (S/N): " answer
+        read -p "Do you want to update the database? (Y/N): " answer
         case $answer in
-            [Ss]* ) return 0;;
+            [Yy]* ) return 0;;
             [Nn]* ) return 1;;
-            * ) echo "Por favor, responda com 'S' para Sim ou 'N' para Não.";;
+            * ) echo "Please respond with 'Y' for Yes or 'N' for No.";;
         esac
     done
 }
@@ -116,21 +116,21 @@ pgclear() {
     docker container stop HealthPanelDevPostgres 2>/dev/null
     docker container prune -f 2>/dev/null
     sleep 5 2>/dev/null
-    echo "Stopped PostgreSQL !"
+    echo "PostgreSQL stopped!"
 }
 
 appstop() {
     echo "Stopping App..."
     ps -ef|grep db1-healthpanel-back | grep -v grep | awk '{print $2}' | xargs -l kill 2>/dev/null
     sleep 5 2>/dev/null
-    echo "App Stopped Successfully !"
+    echo "App stopped successfully!"
 }
 
 main_help() {
     echo ""
-    echo "Por favor, forneça os parâmetros corretos!"
+    echo "Please provide the correct parameters!"
     echo ""
-    echo "Exemplo de uso:"
+    echo "Usage example:"
     echo "./db1-hp.sh \$USER \$TYPE"
     echo ""
     echo "./db1-hp.sh db1.user db       ---> Only DB"
@@ -153,7 +153,7 @@ main() {
         if [ "$TYPE" = "db" ]; then
             check_existing_docker
             if ask_for_scp; then
-                echo "Digite sua senha DB1 intranet para copiar o arquivo Dump PostgreSQL"
+                echo "Enter your DB1 intranet password to copy the PostgreSQL Dump file."
                 scp $DB1USER@10.200.10.16:/tmp/backup_all_databases.sql /tmp/ 2>/dev/null
             fi
             pgclear
@@ -163,7 +163,7 @@ main() {
         elif [ "$TYPE" = "app" ]; then
             check_existing_docker
             if ask_for_scp; then
-                echo "Digite sua senha DB1 de intranet para copiar o arquivo Dump PostgreSQL"
+                echo "Enter your DB1 intranet password to copy the PostgreSQL Dump file."
                 scp $DB1USER@10.200.10.16:/tmp/backup_all_databases.sql /tmp/ 2>/dev/null
             fi
             pgclear
@@ -178,17 +178,17 @@ main() {
             docker container stop HealthPanelDevPostgres 2>/dev/null
             docker container prune -f 2>/dev/null
             docker image rm -f postgres:15.3 2>/dev/null
-            HCPID=`lsof -i :7101 | awk '{print $2}'` 2>/dev/null
-            kill -9 $HCPID 2>/dev/null
+            HCPID=$(lsof -i :7101 | awk '{print $2}') 2>/dev/null
+            [ -n "$HCPID" ] && kill -9 $HCPID
             sleep 5
-            echo "Cleared Successfully !"
+            echo "Cleared successfully!"
         elif [ "$TYPE" = "pgclear" ]; then
             pgclear
         elif [ "$TYPE" = "appstop" ]; then
             appstop   
         else
             echo ""
-            echo "Parâmetro inválido."
+            echo "Invalid parameter."
             echo ""
             main_help
         fi
