@@ -13,16 +13,6 @@
 # Date            : 2023-Dec-06
 # Version         : 1.0
 # ===========================================================================
-
-#check_existing_docker() {
-#    if command -v docker >/dev/null || command -v podman >/dev/null && command -v docker-compose >/dev/null; then
-#        echo "Docker / Podman and Docker Compose are already installed on the system."
-#        echo ""
-#    else
-#        check_os
-#    fi
-#}
-
 check_existing_docker() {
     if command -v docker >/dev/null || command -v podman >/dev/null && command -v docker-compose >/dev/null; then
         echo "Docker / Podman and Docker Compose are already installed on the system."
@@ -222,16 +212,13 @@ main() {
                 sleep 5
                 check_existing_browser
             else
-		echo "Dotnet is not installed. Installing..."
-		brew install dotnet-sdk
-		echo "Dotnet installed successfully."
-		dotnet run appsettings.Development.json &
+                echo "Dotnet is not installed. Installing..."
+                brew install dotnet-sdk
+                echo "Dotnet installed successfully."
+                dotnet run appsettings.Development.json &
                 sleep 5
                 check_existing_browser
-            fi
-            #dotnet run appsettings.Development.json &
-            #sleep 5
-            #check_existing_browser         
+            fi       
         elif [ "$TYPE" == "clear" ]; then
             echo "Cleaning up..."
             docker container stop HealthPanelDevPostgres 2>/dev/null
