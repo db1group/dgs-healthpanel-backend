@@ -41,8 +41,9 @@ namespace Db1HealthPanelBack.Services
             if (!response.IsSuccessStatusCode)
                 return 0;
 
+
             var jsonResponse = await response.Content.ReadAsStreamAsync();
-            var healthScore = await JsonSerializer.DeserializeAsync<HealthScore>(jsonResponse);
+            var healthScore = await JsonSerializer.DeserializeAsync<HealthScore>(jsonResponse, _jsonOptions);
 
             return healthScore is not null ? healthScore.Value!.Value : 0;
         }
@@ -57,5 +58,8 @@ namespace Db1HealthPanelBack.Services
         {
             public decimal? Value { get; set; }
         }
+
+        private readonly JsonSerializerOptions _jsonOptions =
+            new() { PropertyNameCaseInsensitive = true };
     }
 }
