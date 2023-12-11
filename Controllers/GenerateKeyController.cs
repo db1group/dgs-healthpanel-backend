@@ -17,7 +17,6 @@ namespace Db1HealthPanelBack.Controllers
         public GenerateKeyController(GenerateKeyService generateKeyService)
             => _generateKeyService = generateKeyService;
 
-
         /// <summary>
         /// Generate a key for the lead request
         /// </summary>
