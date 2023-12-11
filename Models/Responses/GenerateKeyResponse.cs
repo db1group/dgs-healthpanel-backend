@@ -12,5 +12,4 @@ namespace Db1HealthPanelBack.Models.Responses
         public async Task ExecuteResultAsync(ActionContext context)
                 => await new JsonResult(this).ExecuteResultAsync(context);
     }
-
 }

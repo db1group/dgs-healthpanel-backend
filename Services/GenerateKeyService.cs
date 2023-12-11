@@ -24,6 +24,7 @@ namespace Db1HealthPanelBack.Services
                 ProjectId = request.ProjectId,
                 LeadId = request.LeadId
             };
+
             await _contextConfig.AddAsync(newKey);
             await _contextConfig.SaveChangesAsync();
 
