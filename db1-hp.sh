@@ -17,34 +17,57 @@ check_existing_docker() {
     if command -v docker >/dev/null || command -v podman >/dev/null && command -v docker-compose >/dev/null; then
         echo "Docker / Podman and Docker Compose are already installed on the system."
         echo ""
+    elif command -v brew >/dev/null; then
+        echo "Homebrew is available. Installing Docker..."
+        brew install --cask docker
+        brew install docker-compose
+        echo "Docker and Docker Compose installed successfully."
     else
-        check_linux_distribution
+        check_os
     fi
 }
 
-check_linux_distribution() {
-    if [ -f /etc/os-release ]; then
+check_homebrew() {
+    if ! command -v brew >/dev/null; then
+        echo "Homebrew is not installed. Installing..."
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        if [ $? -eq 0 ]; then
+            echo "Homebrew installed successfully."
+        else
+            echo "Failed to install Homebrew. Exiting."
+            exit 1
+        fi
+    fi
+}
+
+
+check_os() {
+    if [ "$(uname)" == "Darwin" ]; then
+        echo "macOS detected."
+	check_homebrew
+        install_docker_compose_macos
+    elif [ -f /etc/os-release ]; then
         . /etc/os-release
-        if [ "$ID" = "debian" ] || [ "$ID" = "ubuntu" ]; then
+        if [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ]; then
             echo "Debian or Ubuntu detected."
             install_docker_compose
-        elif [ "$ID" = "rhel" ] || [ "$ID" = "centos" ] || [ "$ID" = "fedora" ] ; then
+        elif [ "$ID" == "rhel" ] || [ "$ID" == "centos" ] || [ "$ID" == "fedora" ]; then
             echo "RedHat, CentOS, or Fedora detected."
             install_docker_compose
-        elif [ "$ID" = "suse" ] || [ "$ID" = "sles" ]; then
+        elif [ "$ID" == "suse" ] || [ "$ID" == "sles" ]; then
             echo "SUSE detected."
             install_docker_compose
-        elif [ "$ID" = "amzn" ]; then
+        elif [ "$ID" == "amzn" ]; then
             echo "Amazon Linux detected."
             install_docker_compose_amzn
-        elif [ "$ID" = "ol" ]; then
+        elif [ "$ID" == "ol" ]; then
             echo "Oracle Linux detected."
             install_docker_compose_ol
         else
             echo "Distribution not supported."
         fi
     else
-        echo "File /etc/os-release not found. Unable to determine the distribution."
+        echo "Unable to determine the OS."
     fi
 }
 
@@ -90,15 +113,29 @@ install_docker_compose_ol() {
     echo "Docker Compose v2 installed successfully."
 }
 
+install_docker_compose_macos() {
+    echo "Installing Docker for macOS..."
+    brew install --cask docker
+    echo "Docker for macOS installed successfully."
+
+    echo "Installing Docker Compose v2..."
+    sudo curl -fsSL -o /usr/local/bin/docker-compose https://github.com/docker/compose/releases/download/v2.23.0/docker-compose-darwin-x86_64
+    sudo chmod +x /usr/local/bin/docker-compose
+    echo "Docker Compose v2 installed successfully."
+}
+
 check_existing_browser() {
     if command -v firefox >/dev/null; then
         firefox https://localhost:7101/swagger/index.html &
     elif command -v google-chrome >/dev/null; then
         google-chrome https://localhost:7101/swagger/index.html &
+    elif [ -e "/Applications/Firefox.app/Contents/MacOS/firefox" ]; then
+        /Applications/Firefox.app/Contents/MacOS/firefox https://localhost:7101/swagger/index.html &
     else
-        echo "Firefox or Google Chrome not installed."
+        echo "Firefox, Google Chrome, or Firefox for macOS not installed."
     fi
 }
+
 
 ask_for_scp() {
     while true; do
@@ -150,7 +187,7 @@ main() {
     if [ "$#" -lt 2 ]; then
         main_help
     else
-        if [ "$TYPE" = "db" ]; then
+        if [ "$TYPE" == "db" ]; then
             check_existing_docker
             if ask_for_scp; then
                 echo "Enter your DB1 intranet password to copy the PostgreSQL Dump file."
@@ -160,7 +197,7 @@ main() {
             docker run --name HealthPanelDevPostgres -p 5432:5432 -e POSTGRES_USER=healthpanel -e POSTGRES_PASSWORD=healthpanel -e POSTGRES_DB=healthpanelprocess -d postgres:15.3
             sleep 5
             docker exec -i HealthPanelDevPostgres psql -U healthpanel -d healthpanelprocess < /tmp/backup_all_databases.sql
-        elif [ "$TYPE" = "app" ]; then
+        elif [ "$TYPE" == "app" ]; then
             check_existing_docker
             if ask_for_scp; then
                 echo "Enter your DB1 intranet password to copy the PostgreSQL Dump file."
@@ -170,10 +207,19 @@ main() {
             docker run --name HealthPanelDevPostgres -p 5432:5432 -e POSTGRES_USER=healthpanel -e POSTGRES_PASSWORD=healthpanel -e POSTGRES_DB=healthpanelprocess -d postgres:15.3
             sleep 5
             docker exec -i HealthPanelDevPostgres psql -U healthpanel -d healthpanelprocess < /tmp/backup_all_databases.sql
-            dotnet run appsettings.Development.json &
-            sleep 5
-            check_existing_browser         
-        elif [ "$TYPE" = "clear" ]; then
+            if command -v dotnet >/dev/null; then
+                dotnet run appsettings.Development.json &
+                sleep 5
+                check_existing_browser
+            else
+                echo "Dotnet is not installed. Installing..."
+                brew install dotnet-sdk
+                echo "Dotnet installed successfully."
+                dotnet run appsettings.Development.json &
+                sleep 5
+                check_existing_browser
+            fi       
+        elif [ "$TYPE" == "clear" ]; then
             echo "Cleaning up..."
             docker container stop HealthPanelDevPostgres 2>/dev/null
             docker container prune -f 2>/dev/null
@@ -182,10 +228,10 @@ main() {
             [ -n "$HCPID" ] && kill -9 $HCPID
             sleep 5
             echo "Cleared successfully!"
-        elif [ "$TYPE" = "pgclear" ]; then
+        elif [ "$TYPE" == "pgclear" ]; then
             pgclear
-        elif [ "$TYPE" = "appstop" ]; then
-            appstop   
+        elif [ "$TYPE" == "appstop" ]; then
+            appstop
         else
             echo ""
             echo "Invalid parameter."
