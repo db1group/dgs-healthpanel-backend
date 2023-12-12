@@ -23,8 +23,9 @@ namespace Db1HealthPanelBack.Configs
         public required DbSet<Stack> Stacks { get; set; }
         public required DbSet<StackProject> StackProjects { get; set; }
         public required DbSet<ProjectResponder> ProjectResponders { get; set; }
+        public required DbSet<KeyDB1CLI> KeysDB1CLI { get; set; }
 
-        public ContextConfig(DbContextOptions options) : base(options) {}
+        public ContextConfig(DbContextOptions options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -44,6 +45,7 @@ namespace Db1HealthPanelBack.Configs
             modelBuilder.ApplyConfiguration(new StackMap());
             modelBuilder.ApplyConfiguration(new StackProjectMap());
             modelBuilder.ApplyConfiguration(new ProjectResponderMap());
+            modelBuilder.ApplyConfiguration(new KeyDB1CLIMap());
         }
 
         public Task<string[]> GetAllSonarMetricKeys() => Set<SonarMetric>().AsNoTracking().Select(prop => prop.Key).ToArrayAsync()!;

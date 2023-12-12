@@ -15,6 +15,7 @@ namespace Db1HealthPanelBack.Entities
         public string? SonarUrl { get; set; }
         public string? SonarToken { get; set; }
         public string? SonarProjectKeys { get; set; }
+        public bool UseDB1CLI { get; set; } = false;
         public ICollection<StackProject>? StackProjects { get; set; }
         public ICollection<ProjectResponder>? ProjectResponders { get; set; }
     }
