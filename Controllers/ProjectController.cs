@@ -71,6 +71,7 @@ namespace Db1HealthPanelBack.Controllers
         ///         "sonarUrl": "Sonar Url",
         ///         "sonarToken": "Sonar Token",
         ///         "sonarProjectKeys": "Sonar Project Keys",
+        ///         "useDB1CLI": "true or false",
         ///         "leadProjects": [{ leadId: "Lead Id" }],
         ///         "costCenter": { costCenterId: "Cost Center Id" }
         ///     }
