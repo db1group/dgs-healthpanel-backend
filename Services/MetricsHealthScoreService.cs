@@ -1,4 +1,6 @@
-﻿using Db1HealthPanelBack.Entities;
+﻿using Db1HealthPanelBack.Configs;
+using Db1HealthPanelBack.Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text.Json;
 
@@ -8,17 +10,25 @@ namespace Db1HealthPanelBack.Services
     {
         private readonly IConfiguration _configuration;
         private readonly ILogger<MetricsHealthScoreService> _logger;
+        private readonly ContextConfig _contextConfig;
 
-        public MetricsHealthScoreService(IConfiguration configuration, ILogger<MetricsHealthScoreService> logger)
+        public MetricsHealthScoreService(IConfiguration configuration, ILogger<MetricsHealthScoreService> logger, ContextConfig contextConfig)
         {
             _configuration = configuration;
             _logger = logger;
+            _contextConfig = contextConfig;
         }
 
         public async Task<decimal> GetMetricsHealthScore(Project project)
         {
             if (project.SonarName.IsNullOrEmpty() && project.SonarProjectKeys.IsNullOrEmpty())
                 return 0;
+
+            var evaluation = await _contextConfig.Evaluations.FirstOrDefaultAsync(prop => prop.ProjectId == project!.Id
+                                                                                          && prop.Date.Month == DateTime.Now.Month
+                                                                                          && prop.Date.Year == DateTime.Now.Year);
+
+            if (evaluation is not null && evaluation.MetricsHealthScore != 0) return evaluation.MetricsHealthScore;
 
             var urlRequest = await DefineProjectUrlRequest(project);
 
@@ -45,7 +55,7 @@ namespace Db1HealthPanelBack.Services
             var jsonResponse = await response.Content.ReadAsStreamAsync();
             var healthScore = await JsonSerializer.DeserializeAsync<HealthScore>(jsonResponse, _jsonOptions);
 
-            return healthScore is not null ? healthScore.Value!.Value : 0;
+            return healthScore!.Value is not null ? healthScore.Value!.Value : 0;
         }
 
         private Task<string> DefineProjectUrlRequest(Project project)
