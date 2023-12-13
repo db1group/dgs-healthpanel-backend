@@ -11,12 +11,10 @@ namespace Db1HealthPanelBack.Services
     public class EvaluationService
     {
         private readonly ContextConfig _contextConfig;
-        private readonly IMemoryCache _cache;
 
-        public EvaluationService(ContextConfig contextConfig, IMemoryCache cache)
+        public EvaluationService(ContextConfig contextConfig)
         {
             _contextConfig = contextConfig;
-            _cache = cache;
         }
 
         public async Task<IEnumerable<EvaluationResponse>> GetEvaluationsAsync(IEnumerable<Guid>? projectIds,
@@ -32,11 +30,6 @@ namespace Db1HealthPanelBack.Services
         public async Task<IEnumerable<EvaluationAnalyticResponse>> GetEvaluationsAnalyticAsync(IEnumerable<Guid>? projectIds,
             IEnumerable<Guid>? costCenterIds, DateTime? startDate, DateTime? endDate)
         {
-            var cacheKey = GenerateCacheKey(projectIds, costCenterIds, startDate, endDate);
-
-            if (_cache.TryGetValue(cacheKey, out IEnumerable<EvaluationAnalyticResponse>? cachedResult))
-                return cachedResult!;
-
             var query = GetBaseQuery(projectIds, costCenterIds, startDate, endDate)
                 .Include(x => x.Answer)
                     .ThenInclude(x => x!.Pillars!)
@@ -76,10 +69,6 @@ namespace Db1HealthPanelBack.Services
 
                 evaluationsWithScores.Add(evaluationWithScores);
             }
-
-            var cacheOptions = new MemoryCacheEntryOptions()
-                .SetAbsoluteExpiration(TimeSpan.FromMinutes(10));
-            _cache.Set(cacheKey, evaluationsWithScores, cacheOptions);
 
             return evaluationsWithScores;
         }
@@ -227,25 +216,6 @@ namespace Db1HealthPanelBack.Services
                 }
 
             return pillarsScore;
-        }
-
-        private string GenerateCacheKey(IEnumerable<Guid>? projectIds, IEnumerable<Guid>? costCenterIds, DateTime? startDate, DateTime? endDate)
-        {
-            var key = $"CacheKey_EvaluationsAnalytic_";
-
-            if (projectIds != null)
-                key += string.Join("_", projectIds) + "_";
-
-            if (costCenterIds != null)
-                key += string.Join("_", costCenterIds) + "_";
-
-            if (startDate != null)
-                key += startDate.Value.ToString("yyyyMMdd") + "_";
-
-            if (endDate != null)
-                key += endDate.Value.ToString("yyyyMMdd") + "_";
-
-            return key;
         }
     }
 }

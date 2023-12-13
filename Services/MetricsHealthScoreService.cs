@@ -21,14 +21,15 @@ namespace Db1HealthPanelBack.Services
 
         public async Task<decimal> GetMetricsHealthScore(Project project)
         {
-            if (project.SonarName.IsNullOrEmpty() && project.SonarProjectKeys.IsNullOrEmpty())
-                return 0;
-
             var evaluation = await _contextConfig.Evaluations.FirstOrDefaultAsync(prop => prop.ProjectId == project!.Id
                                                                                           && prop.Date.Month == DateTime.Now.Month
                                                                                           && prop.Date.Year == DateTime.Now.Year);
 
-            if (evaluation is not null && evaluation.MetricsHealthScore != 0) return evaluation.MetricsHealthScore;
+            if (project.SonarName.IsNullOrEmpty() && project.SonarProjectKeys.IsNullOrEmpty() && evaluation is null)
+                return 0;
+
+            if (project.SonarName.IsNullOrEmpty() && project.SonarProjectKeys.IsNullOrEmpty() && evaluation is not null && evaluation.MetricsHealthScore != 0)
+                return evaluation.MetricsHealthScore;
 
             var urlRequest = await DefineProjectUrlRequest(project);
 
