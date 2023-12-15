@@ -18,7 +18,7 @@ namespace Db1HealthPanelBack.Controllers
             => _generateKeyService = generateKeyService;
 
         /// <summary>
-        /// Generate a key for the lead request
+        /// Generate a key for the project requested
         /// </summary>
         /// <param name="request"></param>
         /// <remarks>
@@ -27,7 +27,6 @@ namespace Db1HealthPanelBack.Controllers
         ///     POST /generatekey
         ///     {
         ///         "projectId": "Project Id",
-        ///         "leadId": "Lead Id",
         ///     }
         ///     
         /// </remarks>
