@@ -15,7 +15,6 @@ builder.Services.AddMapster();
 builder.Services.AddDomainServices();
 builder.Services.AddCompressionToResponse();
 builder.Services.AddAzureAdAuth(builder.Configuration);
-builder.Services.AddMemoryCache();
 builder.Services.AddIntegrations();
 
 SentryConfig.AddSentry(builder.Configuration);
