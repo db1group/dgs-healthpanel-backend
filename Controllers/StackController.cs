@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Db1HealthPanelBack.Controllers;
 
-[Authorize(AuthenticationSchemes = "JwtBearer")]
+[Authorize(AuthenticationSchemes = "Bearer", Roles = "health_stack")]
 [ApiController]
 [Route("[controller]")]
 public class StackController : ControllerBase

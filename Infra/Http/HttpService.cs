@@ -21,11 +21,18 @@ public class HttpService
         return await GetContent<T>(response);
     }
 
+    public async Task<T?> Post<T>(HttpRequestMessage request) where T : class
+    {
+        var response = await _httpClient.PostAsync(request?.RequestUri!, request?.Content);
+
+        return await GetContent<T>(response);
+    }
+
     private async Task<T?> GetContent<T>(HttpResponseMessage response) where T : class
     {
         if (!response.IsSuccessStatusCode)
             return default;
-        
+
         var responseContent = await response.Content.ReadAsStreamAsync();
         return await responseContent.Deserialize<T>();
     }

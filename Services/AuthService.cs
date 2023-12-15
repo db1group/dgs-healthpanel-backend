@@ -1,117 +1,73 @@
 using Db1HealthPanelBack.Models.Requests;
 using Db1HealthPanelBack.Models.Responses;
 using Db1HealthPanelBack.Models.Responses.Errors;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Db1HealthPanelBack.Infra.Shared;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Db1HealthPanelBack.Infra.Http;
 
 namespace Db1HealthPanelBack.Services
 {
     public class AuthService
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly HttpService _httpService;
         private readonly IConfiguration _configuration;
 
         public AuthService(
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager,
+            HttpService httpService,
             IConfiguration configuration
         )
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
+            _httpService = httpService;
             _configuration = configuration;
         }
 
         public async Task<IActionResult> Login(LoginRequest user)
         {
-            var userLoginResponse = await _signInManager.PasswordSignInAsync(
-                user.Email,
-                user.Password,
-                isPersistent: false,
-                lockoutOnFailure: false
-             );
-            if (!userLoginResponse.Succeeded)
-                return new ErrorAuthResponse(ErrorMessage.LoginFail, StatusCodes.Status400BadRequest, null);
+            var request = new HttpRequestMessage
+            {
+                RequestUri = new Uri("http://localhost:8080/realms/db1-realm/protocol/openid-connect/token"),
+                Content = new FormUrlEncodedContent(new Dictionary<string, string>
+                {
+                    { "grant_type", "password" },
+                    { "client_id", "health-panel" },
+                    { "client_secret", "nY0DMoN0nrA51IBdtEdobtT7WOxDtjBa" },
+                    { "username", user.UserName },
+                    { "password", user.Password },
+                    {"Content-Type", "application/x-www-form-urlencoded"}
+                })
+            };
 
-            return new AuthResponse(await GetCredentials(user.Email));
-        }
+            var response = await _httpService.Post<TokenResponse>(request);
 
-        public async Task<IActionResult> LoginWithoutPassword(string userId)
-        {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
+            if (response == null)
                 return new ErrorAuthResponse(ErrorMessage.LoginFail, StatusCodes.Status401Unauthorized, null);
 
-            return new AuthResponse(await GetCredentials(user.Email ?? string.Empty));
+            return new AuthResponse(response!);
         }
 
-        public async Task<TokenResponse> GetCredentials(string email)
-        {
-            var user = await _userManager.FindByEmailAsync(email);
 
-            var accessTokenClaims = await GetClaims(user!, true);
-            var refrashTokenClaims = await GetClaims(user!, false);
+        // public async Task<IActionResult> LoginWithoutPassword(string userId)
+        // {
+        //     // var user = await _userManager.FindByIdAsync(userId);
 
-            var dataExperationAccessToken = DateTime.UtcNow.AddSeconds(
-                double.Parse(_configuration["JwtOptions:AccessTokenExpiration"]!));
-            var dataExperationRefreshToken = DateTime.UtcNow.AddSeconds(
-                double.Parse(_configuration["JwtOptions:RefreshTokenExpiration"]!));
+        //     var user = "null";
+        //     if (user == null)
+        //         return new ErrorAuthResponse(ErrorMessage.LoginFail, StatusCodes.Status401Unauthorized, null);
 
-            var accessToken = GenerateToken(accessTokenClaims, dataExperationAccessToken);
-            var refreshToken = GenerateToken(refrashTokenClaims, dataExperationRefreshToken);
+        //     return new AuthResponse(await GetCredentials(string.Empty));
+        // }
 
-            return new TokenResponse()
-            {
-                AccessToken = accessToken,
-                RefreshToken = refreshToken,
-            };
-        }
+        // public ChallengeResult ExternalLogin(string provider, string? returnURL = null)
+        // {
+        //     // var redirectURL = _urlHelper.Action("RegisterExternalUser", new { returnURL });
+        //     var redirectURL = "teste-login";
+        //     // var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectURL);
+        //     // return new ChallengeResult(provider, properties);
+        // }
 
-        private string GenerateToken(IEnumerable<Claim> claims, DateTime expirationDate)
-        {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtOptions:Key"]!));
-            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            JwtSecurityToken jwt = new JwtSecurityToken(
-                issuer: _configuration["JwtOptions:Issuer"],
-                audience: _configuration["JwtOptions:Audience"],
-                claims: claims,
-                expires: expirationDate,
-                notBefore: DateTime.Now,
-                signingCredentials: credentials
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(jwt);
-        }
-
-        private async Task<IList<Claim>> GetClaims(IdentityUser user, bool addUserClaims)
-        {
-            var claims = new List<Claim>
-            {
-                new(JwtRegisteredClaimNames.Sub, user?.Id!),
-                new(JwtRegisteredClaimNames.Email, user?.Email!),
-                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new(JwtRegisteredClaimNames.Nbf, DateTime.Now.ToString()),
-            };
-
-            if (addUserClaims && user != null)
-            {
-                var userClaims = await _userManager.GetClaimsAsync(user);
-                var roles = await _userManager.GetRolesAsync(user);
-
-                claims.AddRange(userClaims);
-
-                foreach (var role in roles)
-                    claims.Add(new Claim("role", role));
-            }
-
-            return claims;
-        }
     }
 }

@@ -2,7 +2,9 @@ using System.Text;
 using System.Text.Json.Serialization;
 using Db1HealthPanelBack.Configs;
 using Db1HealthPanelBack.Configs.Middlewares;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -38,12 +40,27 @@ builder.Services.AddSwaggerGen(configuration =>
     });
 });
 builder.Services.AddDatabase(builder.Configuration);
-builder.Services.AddIdentity(builder.Configuration);
-builder.Services.AddJwtAuthentication(builder.Configuration);
+// builder.Services.AddIdentity(builder.Configuration);
+// builder.Services.AddJwtAuthentication(builder.Configuration);
+builder.Services.AddSecurity(builder.Configuration);
 builder.Services.AddMapster();
 builder.Services.AddDomainServices();
 builder.Services.AddCompressionToResponse();
 builder.Services.AddAzureAdAuth(builder.Configuration);
+// builder.Services.AddAuthentication(options =>
+// {
+//     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+//     options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+//     options.DefaultChallengeScheme = "AzureAD";
+// })
+// .AddCookie()
+// .AddOpenIdConnect("AzureAD", options =>
+// {
+//     options.ClientId = builder.Configuration["AzureAd:ClientId"];
+//     options.Authority = $"https://login.microsoftonline.com/";
+//     options.CallbackPath = "/signin-oidc";
+// });
+
 builder.Services.AddMemoryCache();
 
 SentryConfig.AddSentry(builder.Configuration);

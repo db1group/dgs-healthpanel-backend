@@ -9,16 +9,16 @@ namespace Db1HealthPanelBack.Services
 {
     public class UserService
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        // private readonly UserManager<IdentityUser> _userManager;
+        // private readonly SignInManager<IdentityUser> _signInManager;
 
         public UserService(
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager
+        // UserManager<IdentityUser> userManager,
+        // SignInManager<IdentityUser> signInManager
         )
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
+            // _userManager = userManager;
+            // _signInManager = signInManager;
         }
         public async Task<IActionResult> CreateUser(CreateUserRequest user)
         {
@@ -29,11 +29,11 @@ namespace Db1HealthPanelBack.Services
                 EmailConfirmed = true
             };
 
-            var userCreateResult = await _userManager.CreateAsync(userData, user.Password);
-            if (!userCreateResult.Succeeded)
-                return new ErrorAuthResponse(ErrorMessage.CreateUserFail, StatusCodes.Status400BadRequest, userCreateResult.Errors);
+            // var userCreateResult = await _userManager.CreateAsync(userData, user.Password);
+            // if (!true)
+            // return new ErrorAuthResponse(ErrorMessage.CreateUserFail, StatusCodes.Status400BadRequest, userCreateResult.Errors);
 
-            await _signInManager.SignInAsync(userData, false);
+            // await _signInManager.SignInAsync(userData, false);
 
             return new CreateUserResponse();
         }

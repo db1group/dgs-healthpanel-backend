@@ -1,9 +1,9 @@
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
 using Db1HealthPanelBack.Models.Requests;
 using Db1HealthPanelBack.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
 namespace Db1HealthPanelBack.Controllers
 {
     [ApiController]
@@ -13,23 +13,34 @@ namespace Db1HealthPanelBack.Controllers
         private readonly AuthService _authService;
 
         public AuthController(AuthService authService)
-            => _authService = authService;
+        {
+            _authService = authService;
+        }
+
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
          => await _authService.Login(request);
 
-        [Authorize(AuthenticationSchemes = "JwtBearer")]
-        [HttpPost("refresh-login")]
-        public async Task<IActionResult> RefreshLogin()
-        {
-            var Identity = HttpContext.User.Identity as ClaimsIdentity;
-            var userId = Identity?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        //     [HttpGet("external-login")]
+        //     public ChallengeResult ExternalLogin()
+        // => _authService.ExternalLogin("AzureAD");
 
-            if (userId == null)
-                return BadRequest();
+        [HttpPost("teste-login")]
+        public async Task<IActionResult> TesteLogin()
+       => Ok();
 
-            return await _authService.LoginWithoutPassword(userId);
-        }
+        // [Authorize(AuthenticationSchemes = "JwtBearer")]
+        // [HttpPost("refresh-login")]
+        // public async Task<IActionResult> RefreshLogin()
+        // {
+        //     var Identity = HttpContext.User.Identity as ClaimsIdentity;
+        //     var userId = Identity?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        //     if (userId == null)
+        //         return BadRequest();
+
+        //     return await _authService.LoginWithoutPassword(userId);
+        // }
     }
 }
