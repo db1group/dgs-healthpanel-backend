@@ -6,19 +6,12 @@ namespace Db1HealthPanelBack.Models.Requests
     {
         [Required]
         public string? Name { get; set; }
-
         public string? SonarName { get; set; }
-
         public string? SonarUrl { get; set; }
-
         public string? SonarToken { get; set; }
-
         public string? SonarProjectKeys { get; set; }
-
-        public bool? UseDB1CLI { get; set; }
-
+        public bool UseDB1CLI { get; set; }
         public ICollection<LeadProjectRequest>? LeadProjects { get; set; }
-
         [Required]
         public CostCenterRequest? CostCenter { get; set; }
     }
