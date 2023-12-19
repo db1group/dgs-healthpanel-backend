@@ -15,7 +15,7 @@ namespace Db1HealthPanelBack.Models.Requests
 
         public string? SonarProjectKeys { get; set; }
 
-        public bool? UseDB1CLI { get; set; }
+        public bool UseDB1CLI { get; set; }
 
         public ICollection<LeadProjectRequest>? LeadProjects { get; set; }
 
