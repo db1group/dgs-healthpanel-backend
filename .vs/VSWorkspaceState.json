@@ -1,13 +1,7 @@
 {
   "ExpandedNodes": [
-    "",
-    "\\Entities",
-    "\\Migrations",
-    "\\Models",
-    "\\Models\\Responses",
-    "\\Properties",
-    "\\Services"
+    ""
   ],
-  "SelectedNode": "\\appsettings.Development.json",
+  "SelectedNode": "\\db1-healthpanel-back.sln",
   "PreviewInSolutionExplorer": false
 }
